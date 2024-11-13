@@ -35,7 +35,7 @@ class DynamicEnvironnement:
     def update_env(self,delta_t):
         for i in self:
             i.update(delta_t)
-    def get_pixel_env(self):
+    def get_shape_env(self):
         rep = []
         for i in self:
             rep += i.get_shape()
@@ -49,5 +49,5 @@ env.add(RedLightGreenLight((20,20),2.,3))
 for i in range(10):
     print(f"New step {i+1}")
     env.update_env(1.)
-    print(env.get_pixel_env())
+    print(env.get_shape_env())
 
