@@ -43,6 +43,8 @@ class Simulation:
         if not self.drawing: return
         if self.static_img == None:
             print("Nathan t'as pas set static_img")
+            print("Clement cette phrase ne veut rien dire")
+            print("De toute facon faudra qu'on reorganise les fichiers entre eux et ya d'autres trus qui vont pas")
             return
         self.screen.fill("black")
         self.screen.blit(self.static_img,(- self.camera.x, - self.camera.y))
