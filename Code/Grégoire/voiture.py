@@ -1,8 +1,4 @@
-#Pour la voiture, on a besoin du centre de la  voiture (juste une paire de points), de son orientation (un vecteur normalisé qui va donner dans quel sens elle se dirige) et sa vitesse
-#(Pour ça on utilise une fonction déjà toute faite comme on a dit précédemen
-#Augmente la vitesse on utilise la fonciton 
-#Pour l'instant on fait seulement un truc binaire pour la vitesse, soit la vitesse est max, soit elle est min
-#Pour que ça marche mieux, on utilise une equation diffénrentielle de la forme dv/dt = c - fv, ça va conger vers une vitesse max égale à c / f
+#Pour tester la voiture, lancer test_voiture.py
 
 import pygame
 from math import cos, sin
@@ -11,6 +7,8 @@ VITESSE_MAX = 3
 VITESSE_MIN = -3
 FROTTEMENT = 1
 VITESSE_ROT = 0.05 #C'est des gradient par seconde ou par appuis. A long terme, il faudra vérifier qu'on ne tourne pas trop 
+FPS = 60
+
 
 class Voiture():
     def __init__(self):
@@ -21,24 +19,28 @@ class Voiture():
     def update(self, events):
         self.x_position += cos(self.orientation) * self.vitesse
         self.y_position += sin(self.orientation) * self.vitesse
-        if self.x_position < 0:
-            self.x_position = 0
-        if self.y_position == 0:
-            self.y_position = 0
+        accelere = False
+        descelere = False
         for event in events:
             if event == pygame.K_UP:
-                self.augmente_vitesse()
+                self.avance()
+                accelere = True
             elif event == pygame.K_DOWN:
-                self.diminue_vitesse()
+                self.recule()
+                descelere = True
             elif event == pygame.K_RIGHT:
                 self.tourne_droite()
             elif event == pygame.K_LEFT:
                 self.tourne_gauche()
-    def augmente_vitesse(self):
-        self.vitesse = VITESSE_MAX
-    def diminue_vitesse(self): 
-        self.vitesse = VITESSE_MIN
+        if (not accelere) and (not descelere):
+            self.ralenti()
+    def avance(self):
+        self.vitesse += 1 / FPS * (VITESSE_MAX - self.vitesse)
+    def recule(self): 
+        self.vitesse += 1 / FPS * (VITESSE_MIN - self.vitesse)
+    def ralenti(self):
+        self.vitesse += 1 / FPS * (0 - self.vitesse)
     def tourne_droite(self):
-        self.orientation -= VITESSE_ROT
-    def tourne_gauche(self):
         self.orientation += VITESSE_ROT
+    def tourne_gauche(self):
+        self.orientation -= VITESSE_ROT
