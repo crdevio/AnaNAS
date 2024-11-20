@@ -16,24 +16,26 @@ class Voiture():
         self.y_position = 0
         self.orientation = 0 #C'est en radient, son vecteur d'orientation sera donc (cos(orientation), sin(orientation))
         self.vitesse = 0
+
     def update(self, dt, events):
         self.x_position += cos(self.orientation) * self.vitesse * dt
         self.y_position += sin(self.orientation) * self.vitesse * dt
         accelere = False
         descelere = False
         for event in events:
-            if event == pygame.K_UP:
+            if event == pygame.K_z:
                 self.avance(dt)
                 accelere = True
-            elif event == pygame.K_DOWN:
+            elif event == pygame.K_s:
                 self.recule(dt)
                 descelere = True
-            elif event == pygame.K_RIGHT:
+            elif event == pygame.K_d:
                 self.tourne_droite(dt)
-            elif event == pygame.K_LEFT:
+            elif event == pygame.K_q:
                 self.tourne_gauche(dt)
         if (not accelere) and (not descelere):
             self.ralenti(dt)
+
     def avance(self, dt):
         self.vitesse += dt * (VITESSE_MAX - self.vitesse)
     def recule(self, dt): 
@@ -44,3 +46,4 @@ class Voiture():
         self.orientation += VITESSE_ROT * dt
     def tourne_gauche(self, dt):
         self.orientation -= VITESSE_ROT * dt
+    
