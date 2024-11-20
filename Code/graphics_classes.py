@@ -8,3 +8,13 @@ class Camera:
     def move_right(self, step = 1): self.x += step
     def move_up(self,step = 1):     self.y -= step
     def move_down(self, step = 1):  self.y += step
+
+
+from shapely.geometry import Polygon
+def check_intersection(poly1, poly2):
+    # Convertir les listes de points en objets Polygon de Shapely
+    shapely_poly1 = Polygon(poly1)
+    shapely_poly2 = Polygon(poly2)
+    
+    # VÃ©rifier si les polygones s'intersectent
+    return shapely_poly1.intersects(shapely_poly2)

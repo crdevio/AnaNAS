@@ -2,9 +2,11 @@
 import pygame
 from dynamic import *
 from voiture import *
-from graphics_classes import Camera
+from graphics_classes import Camera,Polygon
 import numpy as np
 import pygame.surfarray
+
+
 pygame.init()
 RES_AFFICHAGE = (600,600)
 FPS = 60 
@@ -90,12 +92,11 @@ class Simulation:
                     y + cx * np.sin(angle) + cy * np.cos(angle)
                 )
                 for cx, cy in corners
-            ]
+                ]
+                #polygone = Polygon(rotated_corners)
+                
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)
-        
-        print(image_array.shape)
         pygame.display.flip()
-        pygame.image.save(self.screen, "screenshot.png")
 
        
 dyn_env = DynamicEnvironnement()
