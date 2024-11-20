@@ -5,7 +5,7 @@ from graphics_classes import Camera
 
 pygame.init()
 class Simulation:
-    def __init__(self, dyn_env=DynamicEnvironnement(),res = (600,600), static_url = "",dynamic_list = [], drawing = True, dt = 0.01):
+    def __init__(self, dyn_env=DynamicEnvironnement(),res = (600,600), static_url = "", drawing = True, dt = 0.01):
         self.running = True
         self.clock = pygame.time.Clock()
         self.clock.tick(60)
@@ -14,7 +14,6 @@ class Simulation:
             self.static_img = None
         else:
             self.static_img = pygame.image.load(static_url).convert()
-        self.dyn_list = dynamic_list
         self.drawing = drawing
         if drawing:
             self.time_manager = lambda: self.clock.get_time()/1000.0 # in sec
@@ -40,7 +39,7 @@ class Simulation:
                 self.camera.move_up(100 * dt)
             if keys[pygame.K_DOWN]:
                 self.camera.move_down(100 * dt)
-        self.dyn_env.update_env(dt)
+        self.dyn_env.update_env(dt,keys)
 
 
     def draw(self):
