@@ -49,4 +49,4 @@ class Voiture(Dynamic):
         self.orientation -= VITESSE_ROT * dt
     
     def get_shape(self):
-        return [["rect", (0, 0, 0), (self.x_position, self.y_position, 30, 50)]]
+        return [["rect", (0, 0, 0), (self.x_position, self.y_position, 30, 50),self.orientation]]

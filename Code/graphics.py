@@ -3,6 +3,7 @@ import pygame
 from dynamic import *
 from voiture import *
 from graphics_classes import Camera
+import numpy as np
 
 pygame.init()
 class Simulation:
@@ -53,7 +54,6 @@ class Simulation:
         self.screen.fill("black")
         self.screen.blit(self.static_img,(- self.camera.x, - self.camera.y))
         shapes = self.dyn_env.get_shape_env()
-        print(shapes)
         for shape in shapes:
             if shape[0] == "circle":
                 # shape = "circle",(r,g,b),(center_x,center_y),radius
@@ -66,8 +66,26 @@ class Simulation:
                 y = shape[2][1] - self.camera.y
                 pygame.draw.line(self.screen,shape[1],(x,y), shape[3] - (self.camera.x,self.camera.y),shape[4])
             if shape[0] == "rect":
-                # shape = "rect", (r,g,b), (x,y,lenx,leny)
-                pygame.draw.rect(self.screen,shape[1],(shape[2][0] - self.camera.x,shape[2][1] - self.camera.y, shape[2][2],shape[2][3]))
+                # shape = "rect", (r,g,b), (x,y,lenx,leny), angle
+                pos = shape[2][0]-self.camera.x,shape[2][1]-self.camera.y
+                width,length = shape[2][2],shape[2][3]
+                angle = shape[3]
+                angle+=np.pi/2
+                corners = [
+                (-width, -length),
+                (width, -length),
+                (width, length),
+                (-width, length)
+            ]
+                x,y = pos
+                rotated_corners = [
+                (
+                    x + cx * np.cos(angle) - cy * np.sin(angle),
+                    y + cx * np.sin(angle) + cy * np.cos(angle)
+                )
+                for cx, cy in corners
+            ]
+                pygame.draw.polygon(self.screen,shape[1],rotated_corners)
         pygame.display.flip()
 
        
