@@ -1,6 +1,7 @@
 # Example file showing a basic pygame "game loop"
 import pygame
 from dynamic import *
+from voiture import *
 from graphics_classes import Camera
 
 pygame.init()
@@ -73,6 +74,7 @@ class Simulation:
 dyn_env = DynamicEnvironnement()
 
 dyn_env.add(RedLightGreenLight((100,100),2,5))
+dyn_env.add(Voiture())
             
 jeu = Simulation(static_url="static.png",dyn_env = dyn_env)
 while jeu.running:

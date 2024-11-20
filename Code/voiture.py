@@ -1,7 +1,7 @@
 #Pour tester la voiture, lancer test_voiture.py
 
 import pygame
-import dynamic
+from dynamic import *
 from math import cos, sin
 
 VITESSE_MAX = 3
