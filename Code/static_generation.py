@@ -51,4 +51,6 @@ def generate_images(env,width,height):
 static_env = StaticEnvironnement()
 static_env.add(StraightRoad((40,40),LARGEUR_ROUTE,80,0))
 static_env.add(StraightRoad((135,25),LARGEUR_ROUTE,80,np.pi/2))
+static_env.add(StraightRoad((40,25),LARGEUR_ROUTE,80,np.pi/2))
+static_env.add(StraightRoad((25,120),LARGEUR_ROUTE,125,0))
 generate_images(static_env,500,500)

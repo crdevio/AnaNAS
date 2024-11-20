@@ -11,7 +11,7 @@ VITESSE_ROT = 1.2 #C'est des gradient par seconde ou par appuis. A long terme, i
 FPS = 60
 LONGUEUR = 10
 LARGEUR = 5
-VITESSE_ROT_NECESS = 10
+VITESSE_ROT_NECESS = 20
 
 
 
