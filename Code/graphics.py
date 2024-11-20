@@ -98,6 +98,8 @@ class Simulation:
                 c = False
                 for e in rotated_corners:
                     x,y = int(e[0]),int(e[1])
+                    x+=int(self.camera.x)
+                    y += int(self.camera.y)
                     if sum(self.static_arr[x][y]) == 0:
                         c= True 
                 if c: print("COLLISION FDP")
