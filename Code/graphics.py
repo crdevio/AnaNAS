@@ -21,6 +21,7 @@ class Simulation:
             self.static_img = None
         else:
             self.static_img = pygame.image.load(static_url).convert()
+            self.static_arr = pygame.surfarray.array3d(self.static_img)
         self.drawing = drawing
         if drawing:
             self.time_manager = lambda: self.clock.get_time()/1000.0 # in sec
@@ -94,7 +95,15 @@ class Simulation:
                 for cx, cy in corners
                 ]
                 #polygone = Polygon(rotated_corners)
-                
+                c = False
+                for e in rotated_corners:
+                    x,y = int(e[0]),int(e[1])
+                    if sum(self.static_arr[x][y]) == 0:
+                        c= True 
+                if c: print("COLLISION FDP")
+                else: print("Tu conduis bien")
+                    
+
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)
         pygame.display.flip()
 
