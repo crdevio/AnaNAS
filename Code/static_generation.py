@@ -12,10 +12,10 @@ class Static:
 class StraightRoad(Static):
     def __init__(self,pos,width,length,angle) -> None:
         super().__init__(pos)
-        angle+=np.pi/2
+        angle-=np.pi/2
         corners = [
-        (-width, -length),
-        (width, -length),
+        (-width, 0),
+        (width, 0),
         (width, length),
         (-width, length)
     ]
@@ -49,6 +49,6 @@ def generate_images(env,width,height):
     image.save("output/image.png")
 
 static_env = StaticEnvironnement()
-static_env.add(StraightRoad((40,40),LARGEUR_ROUTE,60,0))
-static_env.add(StraightRoad((100,54),LARGEUR_ROUTE,20,np.pi/2))
+static_env.add(StraightRoad((40,40),LARGEUR_ROUTE,80,0))
+static_env.add(StraightRoad((135,25),LARGEUR_ROUTE,80,np.pi/2))
 generate_images(static_env,500,500)
