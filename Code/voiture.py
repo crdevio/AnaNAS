@@ -10,6 +10,7 @@ VITESSE_ROT = 0.05 #C'est des gradient par seconde ou par appuis. A long terme, 
 FPS = 60
 
 
+
 class Voiture():
     def __init__(self):
         self.x_position = 0
@@ -47,3 +48,5 @@ class Voiture():
     def tourne_gauche(self, dt):
         self.orientation -= VITESSE_ROT * dt
     
+    def get_shape(self):
+        return [["rect", (0, 0, 0), (self.x_position, self.y_position, 30, 50)]]
