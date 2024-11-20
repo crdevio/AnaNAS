@@ -4,10 +4,10 @@ import pygame
 from dynamic import *
 from math import cos, sin
 
-VITESSE_MAX = 20
-VITESSE_MIN = -7
+VITESSE_MAX = 100
+VITESSE_MIN = -20
 FROTTEMENT = 0.5
-VITESSE_ROT = 0.4 #C'est des gradient par seconde ou par appuis. A long terme, il faudra vérifier qu'on ne tourne pas trop 
+VITESSE_ROT = 1.2 #C'est des gradient par seconde ou par appuis. A long terme, il faudra vérifier qu'on ne tourne pas trop 
 FPS = 60
 LONGUEUR = 10
 LARGEUR = 5
