@@ -7,10 +7,11 @@ from math import cos, sin
 VITESSE_MAX = 20
 VITESSE_MIN = -7
 FROTTEMENT = 0.5
-VITESSE_ROT = 0.3 #C'est des gradient par seconde ou par appuis. A long terme, il faudra vérifier qu'on ne tourne pas trop 
+VITESSE_ROT = 0.4 #C'est des gradient par seconde ou par appuis. A long terme, il faudra vérifier qu'on ne tourne pas trop 
 FPS = 60
 LONGUEUR = 10
 LARGEUR = 5
+VITESSE_ROT_NECESS = 10
 
 
 
@@ -46,9 +47,9 @@ class Voiture(Dynamic):
     def ralenti(self, dt):
         self.vitesse += dt * (0 - self.vitesse * FROTTEMENT)
     def tourne_droite(self, dt):
-        self.orientation += VITESSE_ROT * dt
+        self.orientation += VITESSE_ROT * dt * min(self.vitesse/VITESSE_ROT_NECESS,1)
     def tourne_gauche(self, dt):
-        self.orientation -= VITESSE_ROT * dt
+        self.orientation -= VITESSE_ROT * dt* min(self.vitesse/VITESSE_ROT_NECESS,1)
     
     def get_shape(self):
         return [["rect", "blue", (self.x_position, self.y_position, LARGEUR, LONGUEUR),self.orientation]]
