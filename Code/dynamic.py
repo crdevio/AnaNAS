@@ -28,10 +28,13 @@ class RedLightGreenLight(Dynamic):
 class DynamicEnvironnement:
     def __init__(self) -> None:
         self.dynamic_objects = []
-    def add(self,static):
-        self.dynamic_objects.append(static)
+        self.cars = []
+    def add(self,dynamic):
+        self.dynamic_objects.append(dynamic)
+    def add_car(self,car):
+        self.cars.append(car)
     def __getitem__(self, index):
-        return self.dynamic_objects[index]
+        return (self.dynamic_objects[index] if index < len(self.dynamic_objects) else self.cars[index - len(self.dynamic_objects)])
     def update_env(self,delta_t, keys = None):
         for i in self:
             i.update(delta_t, keys)
