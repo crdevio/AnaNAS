@@ -56,7 +56,7 @@ class Simulation:
             print("De toute facon faudra qu'on reorganise les fichiers entre eux et ya d'autres trus qui vont pas")
             return
         image_array = pygame.surfarray.array3d(pygame.display.get_surface())
-        self.dyn_env(image_array)
+        self.dyn_env.decisions(image_array)
         self.screen.fill("black")
         self.screen.blit(self.static_img,(- self.camera.x, - self.camera.y))
         shapes = self.dyn_env.get_shape_env()

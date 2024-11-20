@@ -39,7 +39,9 @@ class Voiture(Dynamic):
             self.tourne_gauche(dt)
         if (not accelere) and (not descelere):
             self.ralenti(dt)
-
+    def decide(self,img):
+        # La elle devra faire ses choix d'ia, img c'est (600,600,3)
+        return
     def avance(self, dt):
         self.vitesse += dt * (VITESSE_MAX - self.vitesse * FROTTEMENT)
     def recule(self, dt): 
