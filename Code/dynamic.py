@@ -42,12 +42,4 @@ class DynamicEnvironnement:
         return rep
     
 
-env = DynamicEnvironnement()
-env.add(RedLightGreenLight((0,0),1.,2))
-env.add(RedLightGreenLight((20,20),2.,3))
-
-for i in range(10):
-    print(f"New step {i+1}")
-    env.update_env(1.)
-    print(env.get_shape_env())
 
