@@ -24,17 +24,16 @@ class Voiture(Dynamic):
         self.y_position += sin(self.orientation) * self.vitesse * dt
         accelere = False
         descelere = False
-        for event in events:
-            if event == pygame.K_z:
-                self.avance(dt)
-                accelere = True
-            elif event == pygame.K_s:
-                self.recule(dt)
-                descelere = True
-            elif event == pygame.K_d:
-                self.tourne_droite(dt)
-            elif event == pygame.K_q:
-                self.tourne_gauche(dt)
+        if events[pygame.K_z]:
+            self.avance(dt)
+            accelere = True
+        if events[pygame.K_s]:
+            self.recule(dt)
+            descelere = True
+        if events[pygame.K_d]:
+            self.tourne_droite(dt)
+        if events[pygame.K_q]:
+            self.tourne_gauche(dt)
         if (not accelere) and (not descelere):
             self.ralenti(dt)
 
