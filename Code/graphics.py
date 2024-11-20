@@ -6,11 +6,14 @@ from graphics_classes import Camera
 import numpy as np
 
 pygame.init()
+RES_AFFICHAGE = (600,600)
+FPS = 60 
+CAMERA_SPEED = 100
 class Simulation:
-    def __init__(self, dyn_env=DynamicEnvironnement(),res = (600,600), static_url = "", drawing = True, dt = 0.01):
+    def __init__(self, dyn_env=DynamicEnvironnement(),res = RES_AFFICHAGE, static_url = "", drawing = True, dt = 0.01):
         self.running = True
         self.clock = pygame.time.Clock()
-        self.clock.tick(60)
+        self.clock.tick(FPS)
         self.screen = pygame.display.set_mode(res)
         if static_url == "":
             self.static_img = None
@@ -26,7 +29,7 @@ class Simulation:
         self.dyn_env = dyn_env
 
     def update(self):
-        self.clock.tick(60)
+        self.clock.tick(FPS)
         for event in pygame.event.get(): 
             if event.type == pygame.QUIT: 
                 self.running = False
@@ -36,13 +39,13 @@ class Simulation:
         if self.drawing:
             # Je mets ça la pour pas avoir à recalculer keys dans draw.
             if keys[pygame.K_LEFT]:
-                self.camera.move_left(100 * dt)
+                self.camera.move_left(CAMERA_SPEED * dt)
             if keys[pygame.K_RIGHT]:
-                self.camera.move_right(100 * dt)
+                self.camera.move_right(CAMERA_SPEED * dt)
             if keys[pygame.K_UP]:
-                self.camera.move_up(100 * dt)
+                self.camera.move_up(CAMERA_SPEED * dt)
             if keys[pygame.K_DOWN]:
-                self.camera.move_down(100 * dt)
+                self.camera.move_down(CAMERA_SPEED * dt)
         self.dyn_env.update_env(dt,keys)
 
 
