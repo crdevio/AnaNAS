@@ -35,6 +35,10 @@ class DynamicEnvironnement:
         self.cars.append(car)
     def __getitem__(self, index):
         return (self.dynamic_objects[index] if index < len(self.dynamic_objects) else self.cars[index - len(self.dynamic_objects)])
+    
+    def decisions(self,img):
+        for e in self.cars:
+            e.decide(img)
     def update_env(self,delta_t, keys = None):
         for i in self:
             i.update(delta_t, keys)

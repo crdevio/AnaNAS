@@ -4,7 +4,7 @@ from dynamic import *
 from voiture import *
 from graphics_classes import Camera
 import numpy as np
-
+import pygame.surfarray
 pygame.init()
 RES_AFFICHAGE = (600,600)
 FPS = 60 
@@ -55,6 +55,8 @@ class Simulation:
             print("Clement cette phrase ne veut rien dire")
             print("De toute facon faudra qu'on reorganise les fichiers entre eux et ya d'autres trus qui vont pas")
             return
+        image_array = pygame.surfarray.array3d(pygame.display.get_surface())
+        self.dyn_env(image_array)
         self.screen.fill("black")
         self.screen.blit(self.static_img,(- self.camera.x, - self.camera.y))
         shapes = self.dyn_env.get_shape_env()
@@ -90,7 +92,10 @@ class Simulation:
                 for cx, cy in corners
             ]
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)
+        
+        print(image_array.shape)
         pygame.display.flip()
+        pygame.image.save(self.screen, "screenshot.png")
 
        
 dyn_env = DynamicEnvironnement()
