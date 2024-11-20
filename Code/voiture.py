@@ -4,10 +4,10 @@ import pygame
 from dynamic import *
 from math import cos, sin
 
-VITESSE_MAX = 3
-VITESSE_MIN = -3
-FROTTEMENT = 1
-VITESSE_ROT = 0.05 #C'est des gradient par seconde ou par appuis. A long terme, il faudra vérifier qu'on ne tourne pas trop 
+VITESSE_MAX = 20
+VITESSE_MIN = -7
+FROTTEMENT = 0.5
+VITESSE_ROT = 0.2 #C'est des gradient par seconde ou par appuis. A long terme, il faudra vérifier qu'on ne tourne pas trop 
 FPS = 60
 
 
@@ -38,11 +38,11 @@ class Voiture(Dynamic):
             self.ralenti(dt)
 
     def avance(self, dt):
-        self.vitesse += dt * (VITESSE_MAX - self.vitesse)
+        self.vitesse += dt * (VITESSE_MAX - self.vitesse * FROTTEMENT)
     def recule(self, dt): 
-        self.vitesse += dt * (VITESSE_MIN - self.vitesse)
+        self.vitesse += dt * (VITESSE_MIN - self.vitesse * FROTTEMENT)
     def ralenti(self, dt):
-        self.vitesse += dt * (0 - self.vitesse)
+        self.vitesse += dt * (0 - self.vitesse * FROTTEMENT)
     def tourne_droite(self, dt):
         self.orientation += VITESSE_ROT * dt
     def tourne_gauche(self, dt):
