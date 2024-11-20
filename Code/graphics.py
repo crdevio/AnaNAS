@@ -96,7 +96,7 @@ dyn_env = DynamicEnvironnement()
 dyn_env.add(RedLightGreenLight((100,100),2,5))
 dyn_env.add(Voiture())
             
-jeu = Simulation(static_url="static.png",dyn_env = dyn_env)
+jeu = Simulation(static_url="output/image.png",dyn_env = dyn_env)
 while jeu.running:
     jeu.update()
     jeu.draw()

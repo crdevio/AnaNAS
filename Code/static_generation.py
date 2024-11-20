@@ -1,6 +1,8 @@
 from PIL import Image, ImageDraw
 import numpy as np
 
+LARGEUR_ROUTE = 15
+
 class Static:
     def __init__(self,pos) -> None:
         self.pos = pos
@@ -44,9 +46,9 @@ def generate_images(env,width,height):
     draw = ImageDraw.Draw(image)
     for obj in env:
         obj.draw_self(draw)
-    image.save("Code/Nathan/output/image.png")
+    image.save("output/image.png")
 
 static_env = StaticEnvironnement()
-static_env.add(StraightRoad((40,40),6,30,0))
-static_env.add(StraightRoad((70,54),6,20,np.pi/2))
-generate_images(static_env,200,200)
+static_env.add(StraightRoad((40,40),LARGEUR_ROUTE,60,0))
+static_env.add(StraightRoad((100,54),LARGEUR_ROUTE,20,np.pi/2))
+generate_images(static_env,500,500)

@@ -9,6 +9,8 @@ VITESSE_MIN = -7
 FROTTEMENT = 0.5
 VITESSE_ROT = 0.2 #C'est des gradient par seconde ou par appuis. A long terme, il faudra vérifier qu'on ne tourne pas trop 
 FPS = 60
+LONGUEUR = 10
+LARGEUR = 5
 
 
 
@@ -49,4 +51,4 @@ class Voiture(Dynamic):
         self.orientation -= VITESSE_ROT * dt
     
     def get_shape(self):
-        return [["rect", "blue", (self.x_position, self.y_position, 30, 50),self.orientation]]
+        return [["rect", "blue", (self.x_position, self.y_position, LARGEUR, LONGUEUR),self.orientation]]
