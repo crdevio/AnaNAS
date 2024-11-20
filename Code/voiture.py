@@ -1,6 +1,7 @@
 #Pour tester la voiture, lancer test_voiture.py
 
 import pygame
+import dynamic
 from math import cos, sin
 
 VITESSE_MAX = 3
@@ -11,7 +12,7 @@ FPS = 60
 
 
 
-class Voiture():
+class Voiture(Dynamic):
     def __init__(self):
         self.x_position = 0
         self.y_position = 0
