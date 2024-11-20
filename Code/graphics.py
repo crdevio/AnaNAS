@@ -57,10 +57,14 @@ class Simulation:
         for shape in shapes:
             if shape[0] == "circle":
                 # shape = "circle",(r,g,b),(center_x,center_y),radius
-                pygame.draw.circle(self.screen, shape[1],shape[2] - (self.camera.x, self.camera.y), shape[3])
+                x = shape[2][0] - self.camera.x
+                y = shape[2][1] - self.camera.y
+                pygame.draw.circle(self.screen, shape[1],(x,y), shape[3])
             if shape[0] == "line":
                 # shape = "line",(r,g,b),(start_x,start_y),(end_x,end_y),width
-                pygame.draw.line(self.screen,shape[1],shape[2] - (self.camera.x,self.camera.y), shape[3] - (self.camera.x,self.camera.y),shape[4])
+                x = shape[2][0] - self.camera.x
+                y = shape[2][1] - self.camera.y
+                pygame.draw.line(self.screen,shape[1],(x,y), shape[3] - (self.camera.x,self.camera.y),shape[4])
             if shape[0] == "rect":
                 # shape = "rect", (r,g,b), (x,y,lenx,leny)
                 pygame.draw.rect(self.screen,shape[1],(shape[2][0] - self.camera.x,shape[2][1] - self.camera.y, shape[2][2],shape[2][3]))
