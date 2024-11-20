@@ -26,11 +26,13 @@ class Simulation:
         self.dyn_env = dyn_env
 
     def update(self):
+        self.clock.tick(60)
         for event in pygame.event.get(): 
             if event.type == pygame.QUIT: 
                 self.running = False
         keys = pygame.key.get_pressed()
         dt = self.time_manager()
+        print(dt)
         if self.drawing:
             # Je mets ça la pour pas avoir à recalculer keys dans draw.
             if keys[pygame.K_LEFT]:
