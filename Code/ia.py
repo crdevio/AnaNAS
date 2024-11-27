@@ -47,6 +47,8 @@ class DQN(nn.Module):
             x = F.relu(self.fc1(x))    # Apply ReLU after fc1
             x = self.fc2(x)            # Output layer (no activation for regression or classification)
             return x
+            #j = torch.argmax(x)
+            #return torch.tensor([1 if i==j else 0 for i in range(x.shape[0])])
 class EpsilonGreedy:
     def __init__(self,policy,epsilon):
         self.policy = policy
