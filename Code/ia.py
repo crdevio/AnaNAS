@@ -1,2 +1,2 @@
 def decide(cone,speed):
-    pass
+    return [1,0,0,0]        #up down left right

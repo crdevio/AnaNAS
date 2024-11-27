@@ -111,7 +111,7 @@ class Simulation:
 dyn_env = DynamicEnvironnement()
 
 dyn_env.add(RedLightGreenLight((100,100),2,5))
-dyn_env.add_car(Voiture())
+dyn_env.add_car(Voiture(ia=True))
             
 jeu = Simulation(static_url="output/image.png",dyn_env = dyn_env)
 while jeu.running:

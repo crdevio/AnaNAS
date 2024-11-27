@@ -19,11 +19,13 @@ ANGLE_CONE = pi / 8
 
 
 class Voiture(Dynamic):
-    def __init__(self):
+    def __init__(self, ia = True):
         self.x_position = 0
         self.y_position = 0
         self.orientation = 0 #C'est en radient, son vecteur d'orientation sera donc (cos(orientation), sin(orientation))
         self.vitesse = 0
+        self.ia = ia
+        self.up,self.down,self.left,self.right = 0,0,0,0
 
         self.cone = []
         for x_cone in range(1, RAYON_CONE):
@@ -40,15 +42,16 @@ class Voiture(Dynamic):
         self.y_position += sin(self.orientation) * self.vitesse * dt
         accelere = False
         descelere = False
-        if events[pygame.K_z]:
+        if not self.ia:self.up,self.down,self.left,self.right = events[pygame.K_z],events[pygame.K_s],events[pygame.K_d],events[pygame.K_q]
+        if self.up:
             self.avance(dt)
             accelere = True
-        if events[pygame.K_s]:
+        if self.down:
             self.recule(dt)
             descelere = True
-        if events[pygame.K_d]:
+        if self.left:
             self.tourne_droite(dt)
-        if events[pygame.K_q]:
+        if self.right:
             self.tourne_gauche(dt)
         if (not accelere) and (not descelere):
             self.ralenti(dt)
@@ -103,5 +106,7 @@ class Voiture(Dynamic):
 
         return cone_actuel
     
-    
+    def get_inputs(self,inputs):
+        if self.ia:
+            self.up,self.down,self.left,self.right = inputs[0],inputs[1],inputs[2],inputs[3]
 

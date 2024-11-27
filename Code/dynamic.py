@@ -43,7 +43,8 @@ class DynamicEnvironnement:
         for e in self.cars:
             cone = e.get_cone()
             cone = [img[int(c[0])][int(c[1])] for c in cone]
-            ia.decide(cone,e.vitesse)
+            inputs = ia.decide(cone,e.vitesse)
+            e.get_inputs(inputs)
     def update_env(self,delta_t, keys = None):
         for i in self:
             i.update(delta_t, keys)
