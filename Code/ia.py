@@ -1,2 +1,2 @@
-def decide():
-    return
+def decide(cone,speed):
+    pass

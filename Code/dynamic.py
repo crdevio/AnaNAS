@@ -1,3 +1,6 @@
+import ia
+
+
 class Dynamic:
     def __init__(self,pos) -> None:
         self.pos = pos
@@ -38,7 +41,9 @@ class DynamicEnvironnement:
     
     def decisions(self,img):
         for e in self.cars:
-            a = e.get_cone()
+            cone = e.get_cone()
+            cone = [img[int(c[0])][int(c[1])] for c in cone]
+            ia.decide(cone,e.vitesse)
     def update_env(self,delta_t, keys = None):
         for i in self:
             i.update(delta_t, keys)

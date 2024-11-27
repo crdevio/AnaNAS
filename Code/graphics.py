@@ -102,8 +102,6 @@ class Simulation:
                     y += int(self.camera.y)
                     if sum(self.static_arr[x][y]) == 0:
                         c= True 
-                if c: print("COLLISION FDP")
-                else: print("Tu conduis bien")
                     
 
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)
