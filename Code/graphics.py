@@ -8,6 +8,7 @@ import pygame.surfarray
 
 
 pygame.init()
+font = pygame.font.Font(None, 36)
 RES_AFFICHAGE = (600,600)
 FPS = 60 
 CAMERA_SPEED = 100
@@ -105,6 +106,18 @@ class Simulation:
                     
 
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)
+        if self.dyn_env.cars[0].ia:
+            text = "Decision: "
+            if self.dyn_env.cars[0].up:
+                text+="UP "
+            if self.dyn_env.cars[0].down:
+                text+="DOWN "
+            if self.dyn_env.cars[0].left:
+                text+="LEFT "
+            if self.dyn_env.cars[0].right:
+                text+="RIGHT "
+            text_surface = font.render(text, True, (255, 0,0))  # True for anti-aliasing
+            self.screen.blit(text_surface, (200, 200))
         pygame.display.flip()
 
        
