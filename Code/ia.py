@@ -60,48 +60,6 @@ class EpsilonGreedy:
             return torch.tensor([[np.random.random() for i in range(4)] for i in range(state.shape[0])])
         
 
-class QLearningAgent:
-    def __init__(self, model, epsilon, gamma, lr):
-        self.model = model
-        self.target_model = DQN(model.input_samples, model.output_features)  # Copy of the model for target
-        self.target_model.load_state_dict(model.state_dict())
-        self.epsilon = epsilon
-        self.gamma = gamma
-        self.optimizer = optim.Adam(self.model.parameters(), lr=lr)
-        self.steps_done = 0
-
-    def select_action(self, state):
-        return greedy(state)
-
-    def update(self, batch):
-        states, actions, rewards, next_states, dones = batch
-        
-        # Convert batch to tensors
-        states = torch.tensor(states, dtype=torch.float32)
-        actions = torch.tensor(actions, dtype=torch.long)
-        rewards = torch.tensor(rewards, dtype=torch.float32)
-        next_states = torch.tensor(next_states, dtype=torch.float32)
-        dones = torch.tensor(dones, dtype=torch.float32)
-
-        # Compute Q values for the current state
-        q_values = self.model(states).gather(1, actions.unsqueeze(1))
-
-        # Compute Q values for the next state
-        next_q_values = self.target_model(next_states).max(1)[0].detach()
-
-        # Compute the target
-        targets = rewards + (self.gamma * next_q_values * (1 - dones))
-
-        # Compute the loss
-        loss = F.mse_loss(q_values.squeeze(), targets)
-
-        # Optimize the model
-        self.optimizer.zero_grad()
-        loss.backward()
-        self.optimizer.step()
-
-    def sync_target_model(self):
-        self.target_model.load_state_dict(self.model.state_dict())
 
 
 def decide(cone,speed,car):
