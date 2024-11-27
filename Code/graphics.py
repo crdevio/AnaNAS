@@ -51,7 +51,7 @@ class Simulation:
                 self.camera.move_down(CAMERA_SPEED * dt)
         self.dyn_env.update_env(dt,keys)
 
-
+    
     def draw(self):
         if not self.drawing: return
         if self.static_img == None:
@@ -64,7 +64,8 @@ class Simulation:
         self.screen.fill("black")
         self.screen.blit(self.static_img,(- self.camera.x, - self.camera.y))
         shapes = self.dyn_env.get_shape_env()
-        for shape in shapes:
+        for bidule in shapes:
+            shape,car = bidule[0],bidule[1]
             if shape[0] == "circle":
                 # shape = "circle",(r,g,b),(center_x,center_y),radius
                 x = shape[2][0] - self.camera.x
@@ -97,14 +98,14 @@ class Simulation:
                 ]
                 #polygone = Polygon(rotated_corners)
                 c = False
+                car.collision = False
                 for e in rotated_corners:
                     x,y = int(e[0]),int(e[1])
                     x+=int(self.camera.x)
                     y += int(self.camera.y)
                     if sum(self.static_arr[x][y]) == 0:
-                        c= True 
-                    
-
+                        c= True
+                        car.collision = True
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)
         if self.dyn_env.cars[0].ia:
             text = "Decision: "

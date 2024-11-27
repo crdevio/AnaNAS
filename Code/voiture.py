@@ -25,7 +25,8 @@ class Voiture(Dynamic):
         self.orientation = 0 #C'est en radient, son vecteur d'orientation sera donc (cos(orientation), sin(orientation))
         self.vitesse = 0
         self.ia = ia
-        self.goal = (200,200)
+        self.collision = False
+        self.goal = [200,200]
         self.up,self.down,self.left,self.right = 0,0,0,0
 
         self.cone = []
@@ -69,7 +70,7 @@ class Voiture(Dynamic):
         self.orientation -= VITESSE_ROT * dt * min(self.vitesse/VITESSE_ROT_NECESS,1)
     
     def get_shape(self):
-        return [["rect", "blue", (self.x_position, self.y_position, LARGEUR, LONGUEUR),self.orientation]]
+        return ["rect", "blue", (self.x_position, self.y_position, LARGEUR, LONGUEUR),self.orientation]
 
     def get_cone(self):
 

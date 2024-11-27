@@ -7,7 +7,7 @@ class Dynamic:
     def update(self,delta_t,keys=None):
         pass
     def get_shape(self):
-        return [[]]
+        return []
 
 class RedLightGreenLight(Dynamic):
     def __init__(self, pos, delay,radius) -> None:
@@ -18,8 +18,8 @@ class RedLightGreenLight(Dynamic):
         self.radius = radius
 
     def get_shape(self):
-        if self.color==0:return [["circle","green",self.pos,self.radius]]
-        else:return [["circle","red",self.pos,self.radius]]
+        if self.color==0:return ["circle","green",self.pos,self.radius]
+        else:return ["circle","red",self.pos,self.radius]
 
     def update(self, delta_t, keys = None):
         self.current_delay -= delta_t
@@ -43,7 +43,7 @@ class DynamicEnvironnement:
         for e in self.cars:
             cone = e.get_cone()
             cone = [img[int(c[0])][int(c[1])] for c in cone]
-            inputs = ia.decide(cone,e.vitesse)
+            inputs = ia.decide(cone,e.vitesse,e)
             e.get_inputs(inputs)
     def update_env(self,delta_t, keys = None):
         for i in self:
@@ -51,7 +51,7 @@ class DynamicEnvironnement:
     def get_shape_env(self):
         rep = []
         for i in self:
-            rep += i.get_shape()
+            rep += [[i.get_shape(),i]]
         return rep
     
 

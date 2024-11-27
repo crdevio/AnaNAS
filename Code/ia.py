@@ -2,13 +2,23 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from memory import Memory
 EPS_START = 0.05
 EPS_END = 0.05
 EPS_DECAY = 1000
+
+
+def state_reward(car):
+    score = 1/(np.linalg.norm(np.array([car.x_position,car.y_position]) - np.array(car.goal))+0.05)
+    if car.collision: 
+        score = - 10000000
+    return score
+
+    
 class DQN(nn.Module):
     def __init__(self, input_samples, output_features):
         super(DQN, self).__init__()
-        self.eps = EPS_START
+        self.memory = Memory()
         # Convolutional layers
         self.conv1 = nn.Conv1d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1)
         self.pool1 = nn.MaxPool1d(kernel_size=2, stride=2)  # Pooling after conv1
@@ -49,11 +59,12 @@ class EpsilonGreedy:
             return torch.tensor([[np.random.random() for i in range(4)] for i in range(state.shape[0])])
 
 
-def decide(cone,speed):
+def decide(cone,speed,car):
     cone = torch.tensor(np.array(cone),dtype=torch.float32)
     cone = cone.view(1,cone.shape[0],cone.shape[1])
     rep = greedy(cone)
     rep = [x>0.5 for x in rep[0]]
+    print("REWARD: ",state_reward(car))
     return rep # up down left right
 
 def reward(voiture,pos_avant):
