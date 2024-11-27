@@ -3,12 +3,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from memory import Memory
-EPS_START = 0.05
+EPS_START = 0.9
 EPS_END = 0.05
 EPS_DECAY = 1000
 
 
 def state_reward(car):
+    # ATTENTION y  a peut-être une couille entre l'appel à state_reward et la valeur de collision.
     score = 1/(np.linalg.norm(np.array([car.x_position,car.y_position]) - np.array(car.goal))+0.05)
     if car.collision: 
         score = - 10000000
@@ -46,7 +47,8 @@ class DQN(nn.Module):
             # Fully connected layers + activation
             x = F.relu(self.fc1(x))    # Apply ReLU after fc1
             x = self.fc2(x)            # Output layer (no activation for regression or classification)
-            return x
+            
+            return x # shape =  (nb_batch,4)
             #j = torch.argmax(x)
             #return torch.tensor([1 if i==j else 0 for i in range(x.shape[0])])
 class EpsilonGreedy:
@@ -60,20 +62,26 @@ class EpsilonGreedy:
         else:
             return torch.tensor([[np.random.random() for i in range(4)] for i in range(state.shape[0])])
 
-
-def decide(cone,speed,car):
+def decide(cone,speed,car,greedy):
     cone = torch.tensor(np.array(cone),dtype=torch.float32)
     cone = cone.view(1,cone.shape[0],cone.shape[1])
     rep = greedy(cone)
-    rep = [x>0.5 for x in rep[0]]
+    j = torch.argmax(rep,dim=1)
+    rep = torch.tensor(
+        [
+        [1 if i==j[k] else 0 for i in range(rep.shape[1])]
+        for k in range(rep.shape[0])]
+        )[0]
     print("REWARD: ",state_reward(car))
-    return rep # up down left right
+    return rep # up down left right
 
 def reward(voiture,pos_avant):
     d_before = np.linalg.norm(voiture.goal - pos_avant)
     d_after = np.linalg.norm(voiture.goal - np.array([voiture.x_position,voiture.y_position]))
     return - (d_after - d_before)
-
 model = DQN(2011,4)
 greedy = EpsilonGreedy(model,EPS_START)
+t = 0
+
+
 

@@ -5,10 +5,10 @@ class Memory:
         self.states = []
         self.actions = []
         self.rewards = []
-    def append(self,theta,state,action,reward):
+    def append(self,theta,state,state_b,action,reward):
         self.theta.append(theta)
         self.states.append(state)
         self.actions.append(action)
         self.rewards.append(reward)
     def get(self,i):
-        self.theta[i],self.states[i],self.actions[i],self.rewards[i]
+        self.theta[i],self.states[i],self.states_before[i],self.actions[i],self.rewards[i]
