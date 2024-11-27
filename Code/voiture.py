@@ -85,7 +85,7 @@ class Voiture(Dynamic):
 
         for i in range(len(self.cone)):
 
-            x, y = cone[i][0], cone[i][1]
+            x, y = self.cone[i][0], self.cone[i][1]
 
             x += x_milieu_devant
             y += y_milieu_devant
