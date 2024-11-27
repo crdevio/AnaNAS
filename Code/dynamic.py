@@ -38,7 +38,7 @@ class DynamicEnvironnement:
     
     def decisions(self,img):
         for e in self.cars:
-            e.decide(img)
+            a = e.get_cone()
     def update_env(self,delta_t, keys = None):
         for i in self:
             i.update(delta_t, keys)
