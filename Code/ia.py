@@ -3,14 +3,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from memory import Memory
-EPS_START = 0.9
-EPS_END = 0.05
-EPS_DECAY = 1000
+EPS_START = 1.
+EPS_DECAY = 0.99
+EPS_MIN = 0.1
 
 
 def state_reward(car):
     # ATTENTION y  a peut-être une couille entre l'appel à state_reward et la valeur de collision.
-    score = 1/(np.linalg.norm(np.array([car.x_position,car.y_position]) - np.array(car.goal))+0.05)
+    score = 1000/(np.linalg.norm(np.array([car.x_position,car.y_position]) - np.array(car.goal))+0.05)
     if car.collision: 
         score = - 10000000
     return score

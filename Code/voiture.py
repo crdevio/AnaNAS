@@ -19,14 +19,14 @@ ANGLE_CONE = pi / 8
 
 
 class Voiture(Dynamic):
-    def __init__(self, position = (0,0), ia = True):
+    def __init__(self, position = (0,0), ia = True, goal = (200,200)):
         self.x_position = position[0]
         self.y_position = position[1]
         self.orientation = 0 #C'est en radient, son vecteur d'orientation sera donc (cos(orientation), sin(orientation))
         self.vitesse = 0
         self.ia = ia
         self.collision = False
-        self.goal = [200,200]
+        self.goal = goal
         self.up,self.down,self.left,self.right = 0,0,0,0
 
         self.cone = []
