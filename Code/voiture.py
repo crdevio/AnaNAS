@@ -40,11 +40,15 @@ class Voiture(Dynamic):
                     
 
     def update(self, dt, events):
+
         self.x_position += cos(self.orientation) * self.vitesse * dt
         self.y_position += sin(self.orientation) * self.vitesse * dt
+
         accelere = False
         descelere = False
-        if not self.ia:self.up,self.down,self.left,self.right = events[pygame.K_z],events[pygame.K_s],events[pygame.K_d],events[pygame.K_q]
+
+        if not self.ia:
+            self.up, self.down, self.left, self.right = events[pygame.K_z], events[pygame.K_s], events[pygame.K_d], events[pygame.K_q]
         if self.up:
             self.avance(dt)
             accelere = True
