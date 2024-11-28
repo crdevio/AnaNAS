@@ -7,11 +7,13 @@ class Memory:
         self.states = []
         self.actions = []
         self.rewards = []
-    def append(self,theta,state,state_b,action,reward):
+        self.terminals = []
+    def append(self,theta,state,state_b,action,reward,terminal):
         self.theta.append(theta)
         self.states.append(state)
         self.actions.append(action)
         self.rewards.append(reward)
+        self.terminals.append(terminal)
     def get(self,i):
         self.theta[i],self.states[i],self.states_before[i],self.actions[i],self.rewards[i]
 
@@ -21,5 +23,5 @@ class Memory:
         next_states = np.array(self.states)[idx+1]
         actions = np.array(self.actions)[idx]
         rewards = np.array(self.rewards)[idx]
-        theta = np.array(self.theta)[idx]
-        return states,next_states,actions,rewards,theta
+        terminals = np.array(self.terminals)[idx]
+        return states,next_states,actions,rewards,terminals

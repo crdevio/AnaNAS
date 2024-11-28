@@ -143,7 +143,7 @@ class DeepQAgent:
         self.jeu = Simulation(static_url="output/image.png",dyn_env = None)
         for k in range(self.k):
             dyn_env = DynamicEnvironnement(
-                lambda cone,speed,car: ia.decide(cone,speed,car,self.epsgreedy) 
+                lambda cone,speed,car: ia.decide(cone,speed,car,self.epsgreedy)
             )
             dyn_env.add(RedLightGreenLight((100,100),2,5))
             dyn_env.add_car(Voiture(position=(40,40),ia=True))
@@ -154,10 +154,13 @@ class DeepQAgent:
                 self.jeu.update(self.memory,self.t)
                 self.memory.theta.append(self.model.parameters)
                 print(len(self.memory.states))
+                if self.t == (self.T):
+                    self.memory.terminals.append(True)
+                else: self.memory.terminals.append(False)
                 self.jeu.draw()
         pygame.quit()
     def etape2(self):
-        states,next_states,actions,rewards,theta = self.memory.sample(32)
+        states,next_states,actions,rewards,terminals = self.memory.sample(32)
         
     def loop(self):
         self.etape1()
