@@ -5,6 +5,9 @@ from voiture import *
 from graphics_classes import Camera,Polygon
 import numpy as np
 import pygame.surfarray
+import torch
+import torch.optim as optim
+import torch.nn as nn
 from memory import Memory
 from ia import DQN,EpsilonGreedy,EPS_START,EPS_END,EPS_DECAY
 pygame.init()
@@ -12,6 +15,7 @@ font = pygame.font.Font(None, 36)
 RES_AFFICHAGE = (600,600)
 FPS = 60 
 CAMERA_SPEED = 100
+GOAL = (200,200)
 class Simulation:
     def __init__(self, dyn_env=DynamicEnvironnement(),res = RES_AFFICHAGE, static_url = "", drawing = True, dt = 0.01):
         pygame.init()
@@ -109,6 +113,7 @@ class Simulation:
                         c= True
                         car.collision = True
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)
+        pygame.draw.circle(self.screen,"red",(GOAL[0]-self.camera.x,GOAL[1]-self.camera.y),2)
         if self.dyn_env.cars[0].ia:
             text = "Decision: "
             if self.dyn_env.cars[0].up:
@@ -130,15 +135,19 @@ dyn_env.add(RedLightGreenLight((100,100),2,5))
 dyn_env.add_car(Voiture(position=(40,40),ia=True))
 
 class DeepQAgent:
-    def __init__(self,T=100,k = 10):
+    def __init__(self,T=100,k = 10, gamma=0.5, lr = 0.01):
         self.memory = Memory()
         self.t = 0
         self.num_sim=0
         self.k = k
+        self.iter = 0
         self.T = T
         self.model = DQN(2011,4)
+        self.optimizer = optim.Adam(self.model.parameters(),lr = lr)
         self.epsgreedy = EpsilonGreedy(self.model,EPS_START)
         self.jeu = None
+        self.gamma = gamma
+        self.criterion = nn.MSELoss()
     def etape1(self):
         self.jeu = Simulation(static_url="output/image.png",dyn_env = None)
         for k in range(self.k):
@@ -153,20 +162,32 @@ class DeepQAgent:
                 self.t+=1
                 self.jeu.update(self.memory,self.t)
                 self.memory.theta.append(self.model.parameters)
-                print(len(self.memory.states))
                 if self.t == (self.T):
                     self.memory.terminals.append(True)
                 else: self.memory.terminals.append(False)
                 self.jeu.draw()
-        pygame.quit()
     def etape2(self):
+        self.optimizer.zero_grad()
         states,next_states,actions,rewards,terminals = self.memory.sample(32)
+        mask = torch.tensor((1. - terminals.astype(float)))
+        predicted = self.model(next_states)
+        maxi = torch.max(predicted,dim=1).values.view(-1).detach()
+        y = rewards + mask * self.gamma * maxi
+        y_predicted = self.model(states) # 32,4
+        rewards_predicted = y_predicted[torch.arange(32),actions].type(torch.float64)
+        loss = self.criterion(y,rewards_predicted)
+        loss.backward()
+        print(f"Loop {self.iter}: {loss.item()}")
+        self.optimizer.step()
         
     def loop(self):
-        self.etape1()
-        self.etape2()
-        self.memoire = Memory()
+        for i in range(1000):
+            self.iter+=1
+            self.memoire = Memory()
+            self.etape1()
+            self.etape2()
         pass
+        pygame.quit()
         
-d = DeepQAgent(k=1)
+d = DeepQAgent(k=1,T = 300)
 d.loop()

@@ -74,7 +74,6 @@ def decide(cone,speed,car,greedy):
         [1 if i==j[k] else 0 for i in range(rep.shape[1])]
         for k in range(rep.shape[0])]
         )[0]
-    print("REWARD: ",state_reward(car))
     return rep # up down left right
 
 def reward(voiture,pos_avant):

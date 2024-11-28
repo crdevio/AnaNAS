@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 MEM_SIZE = 1000 # taille de la simulation
 class Memory:
@@ -24,4 +25,4 @@ class Memory:
         actions = np.array(self.actions)[idx]
         rewards = np.array(self.rewards)[idx]
         terminals = np.array(self.terminals)[idx]
-        return states,next_states,actions,rewards,terminals
+        return torch.tensor(states, dtype=torch.float32),torch.tensor(next_states, dtype=torch.float32),torch.tensor(actions),torch.tensor(rewards,dtype=torch.float32),terminals

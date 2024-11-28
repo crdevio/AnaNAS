@@ -1,4 +1,5 @@
 import ia
+import torch
 
 
 class Dynamic:
@@ -49,7 +50,7 @@ class DynamicEnvironnement:
             cone = [img[int(c[0])][int(c[1])] for c in cone]
             mem.states.append(cone)
             inputs = self.decide(cone,e.vitesse,e)
-            mem.actions.append(inputs)
+            mem.actions.append(torch.argmax(inputs))
             mem.rewards.append(ia.state_reward(e))
             e.get_inputs(inputs)
     def update_env(self,delta_t, keys = None):
