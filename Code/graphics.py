@@ -193,5 +193,5 @@ class DeepQAgent:
         pass
         pygame.quit()
         
-d = DeepQAgent(k=1,T = 300)
+d = DeepQAgent(k=1,T = 300, gamma=0.99)
 d.loop()
