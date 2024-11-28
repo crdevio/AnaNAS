@@ -157,13 +157,13 @@ class DeepQAgent:
                 self.jeu.draw()
         pygame.quit()
     def etape2(self):
-        print("Faudra faire la descente de gradient ici pour optimiser Q :)")
-        pass
+        states,next_states,actions,rewards,theta = self.memory.sample(32)
+        
     def loop(self):
         self.etape1()
         self.etape2()
         self.memoire = Memory()
         pass
         
-d = DeepQAgent()
-d.etape1()
+d = DeepQAgent(k=1)
+d.loop()
