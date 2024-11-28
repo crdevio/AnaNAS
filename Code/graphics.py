@@ -5,8 +5,8 @@ from voiture import *
 from graphics_classes import Camera,Polygon
 import numpy as np
 import pygame.surfarray
-
-
+from memory import Memory
+from ia import DQN,EpsilonGreedy,EPS_START,EPS_END,EPS_DECAY
 pygame.init()
 font = pygame.font.Font(None, 36)
 RES_AFFICHAGE = (600,600)
@@ -14,6 +14,8 @@ FPS = 60
 CAMERA_SPEED = 100
 class Simulation:
     def __init__(self, dyn_env=DynamicEnvironnement(),res = RES_AFFICHAGE, static_url = "", drawing = True, dt = 0.01):
+        pygame.init()
+        font = pygame.font.Font(None, 36)
         self.running = True
         self.clock = pygame.time.Clock()
         self.clock.tick(FPS)
@@ -32,11 +34,11 @@ class Simulation:
 
         self.dyn_env = dyn_env
 
-    def update(self):
+    def update(self,mem,t):
         self.clock.tick(FPS)
         for event in pygame.event.get(): 
             if event.type == pygame.QUIT: 
-                self.running = False
+                pygame.quit()
         keys = pygame.key.get_pressed()
         dt = self.time_manager()
         if self.drawing:
@@ -50,8 +52,8 @@ class Simulation:
             if keys[pygame.K_DOWN]:
                 self.camera.move_down(CAMERA_SPEED * dt)
         self.dyn_env.update_env(dt,keys)
-
-    
+        image_array = pygame.surfarray.array3d(pygame.display.get_surface())
+        self.dyn_env.decisions(image_array,mem,t)
     def draw(self):
         if not self.drawing: return
         if self.static_img == None:
@@ -59,8 +61,8 @@ class Simulation:
             print("Clement cette phrase ne veut rien dire")
             print("De toute facon faudra qu'on reorganise les fichiers entre eux et ya d'autres trus qui vont pas")
             return
-        image_array = pygame.surfarray.array3d(pygame.display.get_surface())
-        self.dyn_env.decisions(image_array)
+        
+
         self.screen.fill("black")
         self.screen.blit(self.static_img,(- self.camera.x, - self.camera.y))
         shapes = self.dyn_env.get_shape_env()
@@ -126,10 +128,42 @@ dyn_env = DynamicEnvironnement()
 
 dyn_env.add(RedLightGreenLight((100,100),2,5))
 dyn_env.add_car(Voiture(position=(40,40),ia=True))
-            
-jeu = Simulation(static_url="output/image.png",dyn_env = dyn_env)
-while jeu.running:
-    jeu.update()
-    jeu.draw()
 
-pygame.quit()
+class DeepQAgent:
+    def __init__(self,T=100,k = 10):
+        self.memory = Memory()
+        self.t = 0
+        self.num_sim=0
+        self.k = k
+        self.T = T
+        self.model = DQN(2011,4)
+        self.epsgreedy = EpsilonGreedy(self.model,EPS_START)
+        self.jeu = None
+    def etape1(self):
+        self.jeu = Simulation(static_url="output/image.png",dyn_env = None)
+        for k in range(self.k):
+            dyn_env = DynamicEnvironnement(
+                lambda cone,speed,car: ia.decide(cone,speed,car,self.epsgreedy) 
+            )
+            dyn_env.add(RedLightGreenLight((100,100),2,5))
+            dyn_env.add_car(Voiture(position=(40,40),ia=True))
+            self.jeu.dyn_env = dyn_env
+            self.t = 0
+            while self.t < self.T:
+                self.t+=1
+                self.jeu.update(self.memory,self.t)
+                self.memory.theta.append(self.model.parameters)
+                print(len(self.memory.states))
+                self.jeu.draw()
+        pygame.quit()
+    def etape2(self):
+        print("Faudra faire la descente de gradient ici pour optimiser Q :)")
+        pass
+    def loop(self):
+        self.etape1()
+        self.etape2()
+        self.memoire = Memory()
+        pass
+        
+d = DeepQAgent()
+d.etape1()

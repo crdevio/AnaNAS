@@ -21,7 +21,7 @@ class RedLightGreenLight(Dynamic):
         if self.color==0:return ["circle","green",self.pos,self.radius]
         else:return ["circle","red",self.pos,self.radius]
 
-    def update(self, delta_t, keys = None):
+    def update(self, delta_t, keys = None,decide = None):
         self.current_delay -= delta_t
         if self.current_delay<=0:
             self.current_delay = self.delay
@@ -29,9 +29,10 @@ class RedLightGreenLight(Dynamic):
 
 
 class DynamicEnvironnement:
-    def __init__(self) -> None:
+    def __init__(self, decide = None) -> None:
         self.dynamic_objects = []
         self.cars = []
+        self.decide = decide
     def add(self,dynamic):
         self.dynamic_objects.append(dynamic)
     def add_car(self,car):
@@ -39,11 +40,17 @@ class DynamicEnvironnement:
     def __getitem__(self, index):
         return (self.dynamic_objects[index] if index < len(self.dynamic_objects) else self.cars[index - len(self.dynamic_objects)])
     
-    def decisions(self,img):
+    def decisions(self,img,mem,t):
+        """
+        Appelé QUE SI ia est activé
+        """
         for e in self.cars:
             cone = e.get_cone()
             cone = [img[int(c[0])][int(c[1])] for c in cone]
-            inputs = ia.decide(cone,e.vitesse,e)
+            mem.states.append(cone)
+            inputs = self.decide(cone,e.vitesse,e)
+            mem.actions.append(inputs)
+            mem.rewards.append(ia.state_reward(e))
             e.get_inputs(inputs)
     def update_env(self,delta_t, keys = None):
         for i in self:
