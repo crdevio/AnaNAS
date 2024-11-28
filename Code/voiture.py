@@ -81,7 +81,7 @@ class Voiture(Dynamic):
         x_avant_gauche = self.x_position + LONGUEUR * cos(self.orientation)
         y_avant_gauche = self.y_position + LONGUEUR * sin(self.orientation)
 
-        x_avant_droite = x_avant_gauche + LARGEUR * sin(self.orientation)
+        x_avant_droite = x_avant_gauche - LARGEUR * sin(self.orientation)
         y_avant_droite = y_avant_gauche + LARGEUR * cos(self.orientation)
 
         x_milieu_devant = (x_avant_gauche + x_avant_droite) / 2
