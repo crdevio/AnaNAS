@@ -11,6 +11,7 @@ import torch.nn as nn
 from memory import Memory
 from ia import DQN,EpsilonGreedy,EPS_START,EPS_DECAY,EPS_MIN
 import sys
+import argparse
 
 RES_AFFICHAGE = (600,600)
 FPS = 600 
@@ -208,10 +209,13 @@ class DeepQAgent:
         pass
         pygame.quit()
 
-fichier_weight = None
-if len(sys.argv) > 1:
-    fichier_weight = sys.argv[1]
-print(fichier_weight)
 
-d = DeepQAgent(k=1,T = 300, gamma=0.99,weight_path=fichier_weight)
+parser = argparse.ArgumentParser(
+                    prog='ProgramName',
+                    description='What the program does',
+                    epilog='Text at the bottom of help')
+parser.add_argument('-f', '--filename')
+args = parser.parse_args()
+
+d = DeepQAgent(k=1,T = 300, gamma=0.99,weight_path=args.filename)
 d.loop()
