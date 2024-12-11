@@ -15,52 +15,58 @@ def state_reward(car):
         score = - 10000000
     return score
 
-    
+
 class DQN(nn.Module):
     def __init__(self, input_samples, output_features):
         super(DQN, self).__init__()
         self.memory = Memory()
         self.conv1 = nn.Conv1d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1)
         self.pool1 = nn.MaxPool1d(kernel_size=2, stride=2)
-        
+
         self.conv2 = nn.Conv1d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=1)
         self.pool2 = nn.MaxPool1d(kernel_size=2, stride=2)
-        
-        self.fc1 = nn.Linear(32 * (input_samples // 4), 128)
-        self.fc2 = nn.Linear(128, output_features)
-        
-    def forward(self, x):
-            x = x.transpose(1, 2)
-            
-            x = F.relu(self.conv1(x))
-            x = self.pool1(x)
-            
-            x = F.relu(self.conv2(x))
-            x = self.pool2(x)
-            
-            x = x.view(x.size(0), -1)
 
-            x = F.relu(self.fc1(x))
-            x = self.fc2(x)
-            
-            return x
+        self.fc1 = nn.Linear(32 * (input_samples // 4), 128)
+        self.fc2 = nn.Linear(128 + 1, output_features)
+
+    def forward(self, x, vitesse):
+        # Passage des données convolutives
+        x = x.transpose(1, 2)
+        x = F.relu(self.conv1(x))
+        x = self.pool1(x)
+        x = F.relu(self.conv2(x))
+        x = self.pool2(x)
+
+        # Mise en forme pour les couches linéaires
+        x = x.view(x.size(0), -1)
+        x = F.relu(self.fc1(x))
+
+        # Ajout de la vitesse comme seconde entrée
+        vitesse = vitesse.view(-1, 1)  # S'assurer que vitesse a la bonne forme
+        x = torch.cat((x, vitesse), dim=1)
+
+        # Dernière couche linéaire
+        x = self.fc2(x)
+
+        return x
+
 class EpsilonGreedy:
     def __init__(self,policy,epsilon):
         self.policy = policy
         self.eps = epsilon
     def __call__(self,state):
-        (cone) = state
+        (cone,vitesse) = state
         if np.random.random() > self.eps:
-            return self.policy(cone)
+            return self.policy(cone,vitesse)
         else:
-            return torch.tensor([[np.random.random() for i in range(4)] for i in range(state.shape[0])])
+            return torch.tensor([[np.random.random() for i in range(4)] for i in range(cone.shape[0])])
         
 
 
 def decide(cone,speed,car,greedy):
     cone = torch.tensor(np.array(cone),dtype=torch.float32)
     cone = cone.view(1,cone.shape[0],cone.shape[1])
-    rep = greedy(cone)
+    rep = greedy((cone,torch.tensor(car.vitesse)))
     j = torch.argmax(rep,dim=1)
     rep = torch.tensor(
         [

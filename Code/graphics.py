@@ -171,12 +171,12 @@ class DeepQAgent:
                 self.jeu.draw()
     def etape2(self):
         self.optimizer.zero_grad()
-        states,next_states,actions,rewards,terminals = self.memory.sample(32)
+        cones,speeds,next_cones,next_speeds,actions,rewards,terminals = self.memory.sample(32)
         mask = torch.tensor((1. - terminals.astype(float)))
-        predicted = self.model(next_states)
+        predicted = self.model(next_cones,next_speeds)
         maxi = torch.max(predicted,dim=1).values.view(-1).detach()
         y = rewards + mask * self.gamma * maxi
-        y_predicted = self.model(states) # 32,4
+        y_predicted = self.model(cones,speeds)
         rewards_predicted = y_predicted[torch.arange(32),actions].type(torch.float64)
         loss = self.criterion(y,rewards_predicted)
         loss.backward()
