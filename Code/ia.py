@@ -27,9 +27,9 @@ class DQN(nn.Module):
         self.pool2 = nn.MaxPool1d(kernel_size=2, stride=2)
 
         self.fc1 = nn.Linear(32 * (input_samples // 4), 128)
-        self.fc2 = nn.Linear(128 + 1, output_features)
+        self.fc2 = nn.Linear(128 + 3, output_features)
 
-    def forward(self, x, vitesse):
+    def forward(self, x, vitesse, goal):
         # Passage des données convolutives
         x = x.transpose(1, 2)
         x = F.relu(self.conv1(x))
@@ -43,7 +43,8 @@ class DQN(nn.Module):
 
         # Ajout de la vitesse comme seconde entrée
         vitesse = vitesse.view(-1, 1)  # S'assurer que vitesse a la bonne forme
-        x = torch.cat((x, vitesse), dim=1)
+        goal = goal.view(-1,2)
+        x = torch.cat((x, vitesse, goal), dim=1).to(torch.float32)
 
         # Dernière couche linéaire
         x = self.fc2(x)
@@ -55,9 +56,9 @@ class EpsilonGreedy:
         self.policy = policy
         self.eps = epsilon
     def __call__(self,state):
-        (cone,vitesse) = state
+        (cone,vitesse,goal) = state
         if np.random.random() > self.eps:
-            return self.policy(cone,vitesse)
+            return self.policy(cone,vitesse,goal)
         else:
             return torch.tensor([[np.random.random() for i in range(4)] for i in range(cone.shape[0])])
         
@@ -66,7 +67,7 @@ class EpsilonGreedy:
 def decide(cone,speed,car,greedy):
     cone = torch.tensor(np.array(cone),dtype=torch.float32)
     cone = cone.view(1,cone.shape[0],cone.shape[1])
-    rep = greedy((cone,torch.tensor(car.vitesse)))
+    rep = greedy((cone,torch.tensor(car.vitesse),torch.tensor(car.get_relative_goal_position())))
     j = torch.argmax(rep,dim=1)
     rep = torch.tensor(
         [

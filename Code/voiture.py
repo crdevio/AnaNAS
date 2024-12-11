@@ -3,6 +3,7 @@
 import pygame
 from dynamic import *
 from math import cos, sin, pi, atan
+import numpy as np
 
 VITESSE_MAX = 100
 VITESSE_MIN = -20
@@ -75,6 +76,16 @@ class Voiture(Dynamic):
     
     def get_shape(self):
         return ["rect", "blue", (self.x_position, self.y_position, LARGEUR, LONGUEUR),self.orientation]
+    
+    def get_relative_goal_position(self):
+        dx = self.goal[0] - self.x_position
+        dy = self.goal[1] - self.y_position
+
+        # Rotation inverse pour obtenir les coordonnées relatives
+        x_rel = np.cos(-self.orientation) * dx - np.sin(-self.orientation) * dy
+        y_rel = np.sin(-self.orientation) * dx + np.cos(-self.orientation) * dy
+
+        return x_rel, y_rel
 
     def get_cone(self):
 

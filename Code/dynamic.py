@@ -48,7 +48,7 @@ class DynamicEnvironnement:
         for e in self.cars:
             cone = e.get_cone()
             cone = [img[int(c[0])][int(c[1])] for c in cone]
-            mem.states.append((cone,e.vitesse))
+            mem.states.append((cone,e.vitesse,e.get_relative_goal_position()))
             inputs = self.decide(cone,e.vitesse,e)
             mem.actions.append(torch.argmax(inputs))
             mem.rewards.append(ia.state_reward(e))
