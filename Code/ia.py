@@ -20,37 +20,30 @@ class DQN(nn.Module):
     def __init__(self, input_samples, output_features):
         super(DQN, self).__init__()
         self.memory = Memory()
-        # Convolutional layers
         self.conv1 = nn.Conv1d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1)
-        self.pool1 = nn.MaxPool1d(kernel_size=2, stride=2)  # Pooling after conv1
+        self.pool1 = nn.MaxPool1d(kernel_size=2, stride=2)
         
         self.conv2 = nn.Conv1d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=1)
-        self.pool2 = nn.MaxPool1d(kernel_size=2, stride=2)  # Pooling after conv2
+        self.pool2 = nn.MaxPool1d(kernel_size=2, stride=2)
         
-        # Fully connected layers
-        self.fc1 = nn.Linear(32 * (input_samples // 4), 128)  # Adjust based on pooling output
+        self.fc1 = nn.Linear(32 * (input_samples // 4), 128)
         self.fc2 = nn.Linear(128, output_features)
         
     def forward(self, x):
             x = x.transpose(1, 2)
             
-            # Convolutional layers + activation + pooling
-            x = F.relu(self.conv1(x))  # Apply ReLU after conv1
-            x = self.pool1(x)          # Apply max pooling after conv1
+            x = F.relu(self.conv1(x))
+            x = self.pool1(x)
             
-            x = F.relu(self.conv2(x))  # Apply ReLU after conv2
-            x = self.pool2(x)          # Apply max pooling after conv2
+            x = F.relu(self.conv2(x))
+            x = self.pool2(x)
             
-            # Flatten the tensor before passing it to fully connected layers
-            x = x.view(x.size(0), -1)  # Flatten
+            x = x.view(x.size(0), -1)
+
+            x = F.relu(self.fc1(x))
+            x = self.fc2(x)
             
-            # Fully connected layers + activation
-            x = F.relu(self.fc1(x))    # Apply ReLU after fc1
-            x = self.fc2(x)            # Output layer (no activation for regression or classification)
-            
-            return x # shape =  (nb_batch,4)
-            #j = torch.argmax(x)
-            #return torch.tensor([1 if i==j else 0 for i in range(x.shape[0])])
+            return x
 class EpsilonGreedy:
     def __init__(self,policy,epsilon):
         self.policy = policy

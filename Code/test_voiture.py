@@ -10,7 +10,6 @@ clock = pygame.time.Clock()
 ma_voiture = Voiture()
 
 while True:
-    # Process player inputs.
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -29,10 +28,10 @@ while True:
 
     print(ma_voiture.x_position, ma_voiture.y_position)
 
-    screen.fill("purple")  # Fill the display with a solid color
+    screen.fill("purple")
 
     rect = pygame.Rect(ma_voiture.x_position, ma_voiture.y_position, 5, 5)
     rect = pygame.draw.rect(screen, 'black', rect, width=0)
 
-    pygame.display.flip()  # Refresh on-screen display
+    pygame.display.flip()
     clock.tick(60)

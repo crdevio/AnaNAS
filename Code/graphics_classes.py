@@ -16,5 +16,5 @@ def check_intersection(poly1, poly2):
     shapely_poly1 = Polygon(poly1)
     shapely_poly2 = Polygon(poly2)
     
-    # VÃ©rifier si les polygones s'intersectent
+    # Vérifier si les polygones s'intersectent
     return shapely_poly1.intersects(shapely_poly2)
