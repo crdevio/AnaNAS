@@ -14,9 +14,9 @@ LONGUEUR = 10
 LARGEUR = 5
 VITESSE_ROT_NECESS = 20
 
-RAYON_CONE = 100
-ANGLE_CONE = pi / 8
-
+RAYON_CONE = 64
+ANGLE_CONE = 2*pi / 3
+LARGEUR_CONE = 32
 
 
 class Voiture(Dynamic):
@@ -38,8 +38,6 @@ class Voiture(Dynamic):
                 angle = atan(y_cone / x_cone)
                 if angle > -ANGLE_CONE and angle < ANGLE_CONE:
                     self.cone.append((x_cone, y_cone))
-
-        print(len(self.cone))
                     
 
     def update(self, dt, events):
@@ -91,37 +89,17 @@ class Voiture(Dynamic):
 
     def get_cone(self):
 
-        x_avant_gauche = self.x_position + LONGUEUR * cos(self.orientation)
-        y_avant_gauche = self.y_position + LONGUEUR * sin(self.orientation)
-
-        x_avant_droite = x_avant_gauche - LARGEUR * sin(self.orientation)
-        y_avant_droite = y_avant_gauche + LARGEUR * cos(self.orientation)
-
-        x_milieu_devant = (x_avant_gauche + x_avant_droite) / 2
-        y_milieu_devant = (y_avant_gauche + y_avant_droite) / 2
-
-        x_milieu = (x_avant_gauche + self.x_position) / 2
-        y_milieu = (y_avant_gauche + self.y_position) / 2
-
         cone_actuel = []
 
-        for i in range(len(self.cone)):
+        for i in range(RAYON_CONE):
+            for j in range(LARGEUR_CONE):
 
-            x, y = self.cone[i][0], self.cone[i][1]
+                x, y = self.cone[i][0], self.cone[i][1]
 
-            x += x_milieu_devant
-            y += y_milieu_devant
+                x += cos(self.orientation-ANGLE_CONE/2+j/LARGEUR_CONE*ANGLE_CONE)*i
+                y += sin(self.orientation-ANGLE_CONE/2+j/LARGEUR_CONE*ANGLE_CONE)*i
 
-            x_p = x - x_milieu
-            y_p = y - y_milieu
-
-            x_pp = x_p * cos(self.orientation) - y_p * sin(self.orientation)
-            y_pp = x_p * sin(self.orientation) + y_p * cos(self.orientation)
-
-            x_rot = x_pp + x_milieu
-            y_rot = y_pp + y_milieu
-
-            cone_actuel.append([x_rot, y_rot])
+                cone_actuel.append([int(x),int(y)])
 
         return cone_actuel
     

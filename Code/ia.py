@@ -12,7 +12,7 @@ def state_reward(car):
     # ATTENTION y  a peut-être une couille entre l'appel à state_reward et la valeur de collision.
     score = 1000/(np.linalg.norm(np.array([car.x_position,car.y_position]) - np.array(car.goal))+0.05)
     if car.collision: 
-        score = - 10000000
+        score = - 100
     return score
 
 
@@ -20,22 +20,19 @@ class DQN(nn.Module):
     def __init__(self, input_samples, output_features):
         super(DQN, self).__init__()
         self.memory = Memory()
-        self.conv1 = nn.Conv1d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1)
+        self.conv1 = nn.Conv1d(in_channels=3, out_channels=1, kernel_size=3, stride=1, padding=1)
         self.pool1 = nn.MaxPool1d(kernel_size=2, stride=2)
 
-        self.conv2 = nn.Conv1d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=1)
-        self.pool2 = nn.MaxPool1d(kernel_size=2, stride=2)
-
-        self.fc1 = nn.Linear(32 * (input_samples // 4), 128)
-        self.fc2 = nn.Linear(128 + 3, output_features)
+        self.fc1 = nn.Linear(1 * (input_samples // 2), 16)
+        self.fc2 = nn.Linear(16 + 3, output_features)
 
     def forward(self, x, vitesse, goal):
         # Passage des données convolutives
         x = x.transpose(1, 2)
         x = F.relu(self.conv1(x))
         x = self.pool1(x)
-        x = F.relu(self.conv2(x))
-        x = self.pool2(x)
+        #x = F.relu(self.conv2(x))
+        #x = self.pool2(x)
 
         # Mise en forme pour les couches linéaires
         x = x.view(x.size(0), -1)
