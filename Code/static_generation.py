@@ -41,16 +41,19 @@ class StaticEnvironnement:
         return self.static_objects[index]
 
 
-def generate_images(env,width,height):
+def generate_images(env,width,height,file='output/image.png'):
     image = Image.new("RGB", (width, height), "black")
     draw = ImageDraw.Draw(image)
     for obj in env:
         obj.draw_self(draw)
-    image.save("output/image.png")
+    image.save(file)
 
 static_env = StaticEnvironnement()
+"""
 static_env.add(StraightRoad((40,40),LARGEUR_ROUTE,80,0))
 static_env.add(StraightRoad((135,25),LARGEUR_ROUTE,80,np.pi/2))
 static_env.add(StraightRoad((40,25),LARGEUR_ROUTE,80,np.pi/2))
 static_env.add(StraightRoad((25,120),LARGEUR_ROUTE,125,0))
-generate_images(static_env,500,500)
+"""
+static_env.add(StraightRoad((40, 40), LARGEUR_ROUTE,400,0))
+generate_images(static_env,500,500,file='output/straight.png')
