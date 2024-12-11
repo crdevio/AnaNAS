@@ -15,7 +15,7 @@ font = pygame.font.Font(None, 36)
 RES_AFFICHAGE = (600,600)
 FPS = 600 
 CAMERA_SPEED = 100
-GOAL = (140,122)
+GOAL = (400,40) #(140,122)
 class Simulation:
     def __init__(self, dyn_env=DynamicEnvironnement(),res = RES_AFFICHAGE, static_url = "", drawing = True, dt = 0.017):
         pygame.init()
@@ -151,13 +151,13 @@ class DeepQAgent:
         self.gamma = gamma
         self.criterion = nn.MSELoss()
     def etape1(self):
-        self.jeu = Simulation(static_url="output/image.png",dyn_env = None)
+        self.jeu = Simulation(static_url="output/straight.png",dyn_env = None)
         for k in range(self.k):
             dyn_env = DynamicEnvironnement(
                 lambda cone,speed,car: ia.decide(cone,speed,car,self.epsgreedy)
             )
             dyn_env.add(RedLightGreenLight((100,100),2,5))
-            dyn_env.add_car(Voiture(position=(40,40),ia=True, goal=GOAL))
+            dyn_env.add_car(Voiture(position=(80,40),ia=True, goal=GOAL))
             self.jeu.dyn_env = dyn_env
             self.t = 0
             while self.t < self.T:
