@@ -34,10 +34,12 @@ class Voiture(Dynamic):
         for x_cone in range(1, RAYON_CONE):
             for y_cone in range(-RAYON_CONE, RAYON_CONE):
                 if x_cone**2 + y_cone**2 > RAYON_CONE**2:
-                    break
+                    continue
                 angle = atan(y_cone / x_cone)
                 if angle > -ANGLE_CONE and angle < ANGLE_CONE:
                     self.cone.append((x_cone, y_cone))
+
+        print(self.cone)
                     
 
     def update(self, dt, events):
