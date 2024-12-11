@@ -39,7 +39,7 @@ class Voiture(Dynamic):
                 if angle > -ANGLE_CONE and angle < ANGLE_CONE:
                     self.cone.append((x_cone, y_cone))
 
-        print(self.cone)
+        print(len(self.cone))
                     
 
     def update(self, dt, events):

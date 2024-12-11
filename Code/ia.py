@@ -18,6 +18,7 @@ def state_reward(car):
 
 class DQN(nn.Module):
     def __init__(self, input_samples, output_features):
+        print("input sample : ", input_samples)
         super(DQN, self).__init__()
         self.memory = Memory()
         self.conv1 = nn.Conv1d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1)
@@ -32,14 +33,21 @@ class DQN(nn.Module):
     def forward(self, x, vitesse, goal):
         # Passage des données convolutives
         x = x.transpose(1, 2)
+        print(x.shape)
         x = F.relu(self.conv1(x))
+        print(x.shape)
         x = self.pool1(x)
+        print(x.shape)
         x = F.relu(self.conv2(x))
+        print(x.shape)
         x = self.pool2(x)
+        print(x.shape)
 
         # Mise en forme pour les couches linéaires
         x = x.view(x.size(0), -1)
+        print(x.shape)
         x = F.relu(self.fc1(x))
+        print(x.shape)
 
         # Ajout de la vitesse comme seconde entrée
         vitesse = vitesse.view(-1, 1)  # S'assurer que vitesse a la bonne forme
@@ -80,7 +88,7 @@ def reward(voiture,pos_avant):
     d_before = np.linalg.norm(voiture.goal - pos_avant)
     d_after = np.linalg.norm(voiture.goal - np.array([voiture.x_position,voiture.y_position]))
     return - (d_after - d_before)
-model = DQN(2011,4)
+model = DQN(3923,4)
 greedy = EpsilonGreedy(model,EPS_START)
 t = 0
 

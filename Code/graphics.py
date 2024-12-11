@@ -148,8 +148,8 @@ class DeepQAgent:
         self.k = k
         self.iter = 0
         self.T = T
-        self.model = DQN(2011,4)
-        if weight_path != None: self.model.load_state_dict(torch.load(weight_path, weights_only=True))
+        self.model = DQN(3923,4)
+        #if weight_path != None: self.model.load_state_dict(torch.load(weight_path, weights_only=True))
         self.optimizer = optim.Adam(self.model.parameters(),lr = lr)
         self.epsgreedy = EpsilonGreedy(self.model,EPS_START)
         self.jeu = None
