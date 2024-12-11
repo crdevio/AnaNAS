@@ -42,12 +42,13 @@ class DynamicEnvironnement:
         return (self.dynamic_objects[index] if index < len(self.dynamic_objects) else self.cars[index - len(self.dynamic_objects)])
     
     def decisions(self,img,mem,t):
+        L,l = len(img),len(img[0])
         """
         Appelé QUE SI ia est activé
         """
         for e in self.cars:
             cone = e.get_cone()
-            cone = [img[int(c[0])][int(c[1])] for c in cone]
+            cone = [img[min(int(c[0]),L-1)][min(int(c[1]),l-1)] for c in cone]
             mem.states.append((cone,e.vitesse,e.get_relative_goal_position()))
             inputs = self.decide(cone,e.vitesse,e)
             mem.actions.append(torch.argmax(inputs))
