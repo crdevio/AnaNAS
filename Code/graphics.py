@@ -140,7 +140,7 @@ dyn_env.add(RedLightGreenLight((100,100),2,5))
 dyn_env.add_car(Voiture(position=(40,40),ia=True))
 
 class DeepQAgent:
-    def __init__(self,T=100,k = 10, gamma=0.5, lr = 0.01):
+    def __init__(self,T=100,k = 10, gamma=0.5, lr = 0.01, weight_path = None):
         self.memory = Memory()
         self.t = 0
         self.num_sim=0
@@ -148,6 +148,7 @@ class DeepQAgent:
         self.iter = 0
         self.T = T
         self.model = DQN(2011,4)
+        if weight_path != None: self.model.load_state_dict(torch.load(weight_path, weights_only=True))
         self.optimizer = optim.Adam(self.model.parameters(),lr = lr)
         self.epsgreedy = EpsilonGreedy(self.model,EPS_START)
         self.jeu = None
@@ -183,8 +184,10 @@ class DeepQAgent:
         rewards_predicted = y_predicted[torch.arange(32),actions].type(torch.float64)
         loss = self.criterion(y,rewards_predicted)
         loss.backward()
+
         print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.epsgreedy.eps}")
         self.optimizer.step()
+        torch.save(self.model.state_dict(), "./weights")
         
     def loop(self):
         for i in range(1000):
@@ -196,5 +199,5 @@ class DeepQAgent:
         pass
         pygame.quit()
         
-d = DeepQAgent(k=1,T = 300, gamma=0.99)
+d = DeepQAgent(k=1,T = 300, gamma=0.99,weight_path= "./weights")
 d.loop()
