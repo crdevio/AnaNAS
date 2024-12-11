@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from memory import Memory
 EPS_START = 1.
-EPS_DECAY = 0.99
+EPS_DECAY = 0.95
 EPS_MIN = 0.1
 
 

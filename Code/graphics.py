@@ -111,7 +111,10 @@ class Simulation:
                     x,y = int(e[0]),int(e[1])
                     x+=int(self.camera.x)
                     y += int(self.camera.y)
-                    if sum(self.static_arr[x][y]) == 0:
+                    somm = 0
+                    try: somm = sum(self.static_arr[x][y])
+                    except:pass
+                    if somm== 0:
                         c= True
                         car.collision = True
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)
