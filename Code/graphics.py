@@ -10,13 +10,18 @@ import torch.optim as optim
 import torch.nn as nn
 from memory import Memory
 from ia import DQN,EpsilonGreedy,EPS_START,EPS_DECAY,EPS_MIN
-pygame.init()
-font = pygame.font.Font(None, 36)
+
 RES_AFFICHAGE = (600,600)
 FPS = 600 
 CAMERA_SPEED = 100
 GOAL = (400,40) #(140,122)
 SAVE_EVERY = 10
+INPUT_SAMPLE = 3923
+
+
+pygame.init()
+font = pygame.font.Font(None, 36)
+
 class Simulation:
     def __init__(self, dyn_env=DynamicEnvironnement(),res = RES_AFFICHAGE, static_url = "", drawing = True, dt = 0.017):
         pygame.init()
@@ -148,7 +153,7 @@ class DeepQAgent:
         self.k = k
         self.iter = 0
         self.T = T
-        self.model = DQN(3923,4)
+        self.model = DQN(INPUT_SAMPLE,4)
         #if weight_path != None: self.model.load_state_dict(torch.load(weight_path, weights_only=True))
         self.optimizer = optim.Adam(self.model.parameters(),lr = lr)
         self.epsgreedy = EpsilonGreedy(self.model,EPS_START)
