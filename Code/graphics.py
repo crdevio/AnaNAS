@@ -16,6 +16,7 @@ RES_AFFICHAGE = (600,600)
 FPS = 600 
 CAMERA_SPEED = 100
 GOAL = (400,40) #(140,122)
+SAVE_EVERY = 10
 class Simulation:
     def __init__(self, dyn_env=DynamicEnvironnement(),res = RES_AFFICHAGE, static_url = "", drawing = True, dt = 0.017):
         pygame.init()
@@ -187,7 +188,7 @@ class DeepQAgent:
 
         print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.epsgreedy.eps}")
         self.optimizer.step()
-        torch.save(self.model.state_dict(), "./weights")
+        if self.iter % SAVE_EVERY==0:torch.save(self.model.state_dict(), "./weights")
         
     def loop(self):
         for i in range(1000):
