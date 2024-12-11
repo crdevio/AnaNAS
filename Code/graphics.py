@@ -10,6 +10,7 @@ import torch.optim as optim
 import torch.nn as nn
 from memory import Memory
 from ia import DQN,EpsilonGreedy,EPS_START,EPS_DECAY,EPS_MIN
+import sys
 
 RES_AFFICHAGE = (600,600)
 FPS = 600 
@@ -154,7 +155,8 @@ class DeepQAgent:
         self.iter = 0
         self.T = T
         self.model = DQN(INPUT_SAMPLE,4)
-        #if weight_path != None: self.model.load_state_dict(torch.load(weight_path, weights_only=True))
+        if weight_path != None: 
+            self.model.load_state_dict(torch.load(weight_path, weights_only=True))
         self.optimizer = optim.Adam(self.model.parameters(),lr = lr)
         self.epsgreedy = EpsilonGreedy(self.model,EPS_START)
         self.jeu = None
@@ -193,7 +195,8 @@ class DeepQAgent:
 
         print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.epsgreedy.eps}")
         self.optimizer.step()
-        if self.iter % SAVE_EVERY==0:torch.save(self.model.state_dict(), "./weights")
+        if self.iter % SAVE_EVERY==0:
+            torch.save(self.model.state_dict(), "./weights")
         
     def loop(self):
         for i in range(1000):
@@ -204,6 +207,11 @@ class DeepQAgent:
             self.epsgreedy.eps=max(EPS_DECAY*self.epsgreedy.eps,EPS_MIN)
         pass
         pygame.quit()
-        
-d = DeepQAgent(k=1,T = 300, gamma=0.99,weight_path= "./weights")
+
+fichier_weight = None
+if len(sys.argv) > 1:
+    fichier_weight = sys.argv[1]
+print(fichier_weight)
+
+d = DeepQAgent(k=1,T = 300, gamma=0.99,weight_path=fichier_weight)
 d.loop()
