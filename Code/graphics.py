@@ -162,7 +162,7 @@ class DeepQAgent:
         self.epsgreedy = EpsilonGreedy(self.model,EPS_START)
         self.jeu = None
         self.gamma = gamma
-        self.criterion = nn.MSELoss()
+        self.criterion = nn.HuberLoss()
     def etape1(self):
         self.jeu = Simulation(static_url="output/straight.png",dyn_env = None)
         for k in range(self.k):
