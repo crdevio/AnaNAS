@@ -177,7 +177,7 @@ class DeepQAgent:
         self.jeu = Simulation(static_url="output/straight.png",dyn_env = None)
         for _ in range(self.game_per_epoch):
             dyn_env = DynamicEnvironnement(
-                lambda cone,speed,car: ia.decide(cone,speed,car,self.epsgreedy)
+                lambda cone,speed,car: ia.decide(cone,speed,car,self.epsgreedy,self.model,self.do_opti)
             )
             dyn_env.add(RedLightGreenLight((100,100),2,5))
             dyn_env.add_car(Voiture(position=(80,40),ia=True, goal=GOAL))

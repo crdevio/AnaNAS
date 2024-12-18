@@ -62,10 +62,12 @@ class EpsilonGreedy:
         
 
 
-def decide(cone,speed,car,greedy):
+def decide(cone,speed,car,greedy,model,do_opti):
     cone = torch.tensor(np.array(cone),dtype=torch.float32)
     cone = cone.view(1,cone.shape[0],cone.shape[1],cone.shape[2])
-    rep = greedy((cone,torch.tensor(car.vitesse),torch.tensor(car.get_relative_goal_position())))
+    if do_opti:
+        rep = greedy((cone,torch.tensor(car.vitesse),torch.tensor(car.get_relative_goal_position())))
+    else: rep = model(cone,torch.tensor(car.vitesse),torch.tensor(car.get_relative_goal_position()))
     j = torch.argmax(rep,dim=1)
     rep = torch.tensor(
         [
