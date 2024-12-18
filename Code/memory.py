@@ -1,14 +1,16 @@
+from collections import namedtuple, deque
 import numpy as np
 import torch
 
 MEM_SIZE = 1000 # taille de la simulation
+
 class Memory:
     def __init__(self):
-        self.theta = []
-        self.states = []
-        self.actions = []
-        self.rewards = []
-        self.terminals = []
+        self.theta = deque([], maxlen = MEM_SIZE)
+        self.states = deque([], maxlen = MEM_SIZE)
+        self.actions = deque([], maxlen = MEM_SIZE)
+        self.rewards = deque([], maxlen = MEM_SIZE)
+        self.terminals = deque([], maxlen = MEM_SIZE)
     def append(self,theta,state,state_b,action,reward,terminal):
         self.theta.append(theta)
         self.states.append(state)
