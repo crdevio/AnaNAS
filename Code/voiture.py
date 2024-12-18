@@ -30,14 +30,6 @@ class Voiture(Dynamic):
         self.goal = goal
         self.up,self.down,self.left,self.right = 0,0,0,0
 
-        self.cone = []
-        for x_cone in range(1, RAYON_CONE):
-            for y_cone in range(-RAYON_CONE, RAYON_CONE):
-                if x_cone**2 + y_cone**2 > RAYON_CONE**2:
-                    continue
-                angle = atan(y_cone / x_cone)
-                if angle > -ANGLE_CONE and angle < ANGLE_CONE:
-                    self.cone.append((x_cone, y_cone))
                     
 
     def update(self, dt, events):
@@ -92,14 +84,15 @@ class Voiture(Dynamic):
         cone_actuel = []
 
         for i in range(RAYON_CONE):
+            cone_actuel.append([])
             for j in range(LARGEUR_CONE):
 
-                x, y = self.cone[i][0], self.cone[i][1]
+                x, y = self.x_position,self.y_position
 
                 x += cos(self.orientation-ANGLE_CONE/2+j/LARGEUR_CONE*ANGLE_CONE)*i
                 y += sin(self.orientation-ANGLE_CONE/2+j/LARGEUR_CONE*ANGLE_CONE)*i
 
-                cone_actuel.append([int(x),int(y)])
+                cone_actuel[-1].append([int(x),int(y)])
 
         return cone_actuel
     

@@ -20,22 +20,23 @@ class DQN(nn.Module):
     def __init__(self, input_samples, output_features):
         super(DQN, self).__init__()
         self.memory = Memory()
-        self.conv1 = nn.Conv1d(in_channels=3, out_channels=1, kernel_size=3, stride=1, padding=1)
-        self.pool1 = nn.MaxPool1d(kernel_size=2, stride=2)
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=4, kernel_size=3, stride=1, padding=1)  # Output: (4, 64, 32)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
-        self.fc1 = nn.Linear(1 * (input_samples // 2), 16)
+        self.fc1 = nn.Linear(1 * (input_samples // 1), 16)
         self.fc2 = nn.Linear(16 + 3, output_features)
 
     def forward(self, x, vitesse, goal):
         # Passage des données convolutives
-        x = x.transpose(1, 2)
-        x = F.relu(self.conv1(x))
-        x = self.pool1(x)
+        x = x.transpose(1, 3)
+        x = self.conv1(x)
+        x = self.pool(x)
         #x = F.relu(self.conv2(x))
         #x = self.pool2(x)
 
         # Mise en forme pour les couches linéaires
         x = x.view(x.size(0), -1)
+        x = F.relu(x)
         x = F.relu(self.fc1(x))
 
         # Ajout de la vitesse comme seconde entrée
@@ -63,7 +64,7 @@ class EpsilonGreedy:
 
 def decide(cone,speed,car,greedy):
     cone = torch.tensor(np.array(cone),dtype=torch.float32)
-    cone = cone.view(1,cone.shape[0],cone.shape[1])
+    cone = cone.view(1,cone.shape[0],cone.shape[1],cone.shape[2])
     rep = greedy((cone,torch.tensor(car.vitesse),torch.tensor(car.get_relative_goal_position())))
     j = torch.argmax(rep,dim=1)
     rep = torch.tensor(
