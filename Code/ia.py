@@ -20,10 +20,10 @@ class DQN(nn.Module):
     def __init__(self, input_samples, output_features):
         super(DQN, self).__init__()
         self.memory = Memory()
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=4, kernel_size=3, stride=1, padding=1)  # Output: (4, 64, 32)
-        self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=2, kernel_size=3, stride=1, padding=1)  # Output: (4, 64, 32)
+        self.pool = nn.MaxPool2d(kernel_size=4, stride=4, padding=0)
 
-        self.fc1 = nn.Linear(1 * (input_samples // 1), 16)
+        self.fc1 = nn.Linear(1 * (input_samples // 8), 16)
         self.fc2 = nn.Linear(16 + 3, output_features)
 
     def forward(self, x, vitesse, goal):
