@@ -20,7 +20,7 @@ GOAL = (400,40) #(140,122)
 SAVE_EVERY = 10
 INPUT_SAMPLE = 2048
 NB_EPOCH = 1000
-BATCH_SIZE = 4
+BATCH_SIZE = 2
 
 
 pygame.init()
@@ -234,5 +234,5 @@ parser = argparse.ArgumentParser(
 parser.add_argument('-f', '--filename')
 args = parser.parse_args()
 
-d = DeepQAgent(game_per_epoch=1, T=300, gamma=0.99, weight_path=args.filename)
+d = DeepQAgent(game_per_epoch=1, T=300, gamma=0.99, weight_path=args.filename,do_opti=False)
 d.loop(NB_EPOCH)
