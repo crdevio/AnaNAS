@@ -20,6 +20,7 @@ GOAL = (400,40) #(140,122)
 SAVE_EVERY = 10
 INPUT_SAMPLE = 2048
 NB_EPOCH = 1000
+BATCH_SIZE = 32
 
 
 pygame.init()
@@ -189,17 +190,19 @@ class DeepQAgent:
                 else: 
                     self.memory.terminals.append(False)
                 self.jeu.draw()
+                if len(self.memory.states) >= BATCH_SIZE:
+                    self.optimize_model()
 
-    def etape2(self):
+    def optimize_model(self):
 
         self.optimizer.zero_grad()
-        cones,speeds,goals,next_cones,next_speeds,next_goals,actions,rewards,terminals = self.memory.sample(32)
+        cones,speeds,goals,next_cones,next_speeds,next_goals,actions,rewards,terminals = self.memory.sample(BATCH_SIZE)
         mask = torch.tensor((1. - terminals.astype(float)))
         predicted = self.model(next_cones,next_speeds,next_goals)
         maxi = torch.max(predicted,dim=1).values.view(-1).detach()
         y = rewards + mask * self.gamma * maxi
         y_predicted = self.model(cones,speeds,goals)
-        rewards_predicted = y_predicted[torch.arange(32),actions].type(torch.float64)
+        rewards_predicted = y_predicted[torch.arange(BATCH_SIZE),actions].type(torch.float64)
         loss = self.criterion(y,rewards_predicted)
         loss.backward()
 
