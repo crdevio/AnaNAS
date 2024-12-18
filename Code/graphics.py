@@ -20,7 +20,7 @@ GOAL = (400,40) #(140,122)
 SAVE_EVERY = 10
 INPUT_SAMPLE = 2048
 NB_EPOCH = 1000
-BATCH_SIZE = 32
+BATCH_SIZE = 4
 
 
 pygame.init()
@@ -192,6 +192,8 @@ class DeepQAgent:
                 self.jeu.draw()
                 if len(self.memory.states) >= BATCH_SIZE:
                     self.optimize_model()
+                for car in dyn_env.cars:
+                    if car.collision:return
 
     def optimize_model(self):
 
@@ -217,7 +219,6 @@ class DeepQAgent:
             self.iter+=1
             #self.memoire = Memory()
             self.etape1()
-            self.etape2()
             self.epsgreedy.eps=max(EPS_DECAY*self.epsgreedy.eps, EPS_MIN)
         pass
         pygame.quit()
