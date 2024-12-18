@@ -148,6 +148,7 @@ dyn_env.add(RedLightGreenLight((100,100),2,5))
 dyn_env.add_car(Voiture(position=(40,40),ia=True))
 
 class DeepQAgent:
+
     def __init__(self,T=100,k = 10, gamma=0.5, lr = 0.01, weight_path = None):
         self.memory = Memory()
         self.t = 0
@@ -163,9 +164,10 @@ class DeepQAgent:
         self.jeu = None
         self.gamma = gamma
         self.criterion = nn.HuberLoss()
+
     def etape1(self):
         self.jeu = Simulation(static_url="output/straight.png",dyn_env = None)
-        for k in range(self.k):
+        for _ in range(self.k):
             dyn_env = DynamicEnvironnement(
                 lambda cone,speed,car: ia.decide(cone,speed,car,self.epsgreedy)
             )
@@ -182,6 +184,7 @@ class DeepQAgent:
                     print("Final Reward: ",self.memory.rewards[-1])
                 else: self.memory.terminals.append(False)
                 self.jeu.draw()
+
     def etape2(self):
         self.optimizer.zero_grad()
         cones,speeds,goals,next_cones,next_speeds,next_goals,actions,rewards,terminals = self.memory.sample(32)
@@ -202,7 +205,7 @@ class DeepQAgent:
     def loop(self):
         for i in range(1000):
             self.iter+=1
-            self.memoire = Memory()
+            #self.memoire = Memory()
             self.etape1()
             self.etape2()
             self.epsgreedy.eps=max(EPS_DECAY*self.epsgreedy.eps,EPS_MIN)
