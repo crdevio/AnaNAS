@@ -51,7 +51,7 @@ class Simulation:
 
         self.dyn_env = dyn_env
 
-    def update(self,mem,t):
+    def update(self,mem,t,sim):
         self.clock.tick(FPS)
         for event in pygame.event.get(): 
             if event.type == pygame.QUIT: 
@@ -60,6 +60,8 @@ class Simulation:
         dt = self.time_manager()
         if self.drawing:
             # Je mets ça la pour pas avoir à recalculer keys dans draw.
+            if keys[pygame.K_SPACE]:
+                sim.do_opti = not sim.do_opti
             if keys[pygame.K_LEFT]:
                 self.camera.move_left(CAMERA_SPEED * dt)
             if keys[pygame.K_RIGHT]:
@@ -152,7 +154,7 @@ dyn_env.add_car(Voiture(position=(40,40),ia=True))
 
 class DeepQAgent:
 
-    def __init__(self, T=100, game_per_epoch = 10, gamma=0.5, lr = 0.01, weight_path = None):
+    def __init__(self, T=100, game_per_epoch = 10, gamma=0.5, lr = 0.01, weight_path = None, do_opti = True):
 
         self.memory = Memory()
         self.t = 0
@@ -168,6 +170,7 @@ class DeepQAgent:
         self.jeu = None
         self.gamma = gamma
         self.criterion = nn.HuberLoss()
+        self.do_opti = do_opti
 
     def etape1(self):
 
@@ -182,7 +185,7 @@ class DeepQAgent:
             self.t = 0
             while self.t < self.T:
                 self.t += 1
-                self.jeu.update(self.memory,self.t)
+                self.jeu.update(self.memory,self.t,self)
                 self.memory.theta.append(self.model.parameters)
                 if self.t == (self.T):
                     self.memory.terminals.append(True)
@@ -190,7 +193,7 @@ class DeepQAgent:
                 else: 
                     self.memory.terminals.append(False)
                 self.jeu.draw()
-                if len(self.memory.states) >= BATCH_SIZE:
+                if len(self.memory.states) >= BATCH_SIZE and self.do_opti:
                     self.optimize_model()
                 for car in dyn_env.cars:
                     if car.collision:return
