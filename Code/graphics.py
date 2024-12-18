@@ -149,7 +149,7 @@ dyn_env.add_car(Voiture(position=(40,40),ia=True))
 
 class DeepQAgent:
 
-    def __init__(self,T=100,k = 10, gamma=0.5, lr = 0.01, weight_path = None):
+    def __init__(self, T=100, k = 10, gamma=0.5, lr = 0.01, weight_path = None):
         self.memory = Memory()
         self.t = 0
         self.num_sim=0
