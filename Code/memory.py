@@ -2,7 +2,7 @@ from collections import namedtuple, deque
 import numpy as np
 import torch
 
-MEM_SIZE = 1000 # taille de la simulation
+MEM_SIZE = 10000 # taille de la simulation
 
 class Memory:
     def __init__(self):
