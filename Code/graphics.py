@@ -19,12 +19,15 @@ CAMERA_SPEED = 100
 GOAL = (400,40) #(140,122)
 SAVE_EVERY = 10
 INPUT_SAMPLE = 2048
+NB_EPOCH = 1000
+BATCH_SIZE = 4
 
 
 pygame.init()
 font = pygame.font.Font(None, 36)
 
 class Simulation:
+
     def __init__(self, dyn_env=DynamicEnvironnement(),res = RES_AFFICHAGE, static_url = "", drawing = True, dt = 0.017):
         pygame.init()
         font = pygame.font.Font(None, 36)
@@ -149,11 +152,12 @@ dyn_env.add_car(Voiture(position=(40,40),ia=True))
 
 class DeepQAgent:
 
-    def __init__(self,T=100,k = 10, gamma=0.5, lr = 0.01, weight_path = None):
+    def __init__(self, T=100, game_per_epoch = 10, gamma=0.5, lr = 0.01, weight_path = None):
+
         self.memory = Memory()
         self.t = 0
         self.num_sim=0
-        self.k = k
+        self.game_per_epoch = game_per_epoch
         self.iter = 0
         self.T = T
         self.model = DQN(INPUT_SAMPLE,4)
@@ -166,8 +170,9 @@ class DeepQAgent:
         self.criterion = nn.HuberLoss()
 
     def etape1(self):
+
         self.jeu = Simulation(static_url="output/straight.png",dyn_env = None)
-        for _ in range(self.k):
+        for _ in range(self.game_per_epoch):
             dyn_env = DynamicEnvironnement(
                 lambda cone,speed,car: ia.decide(cone,speed,car,self.epsgreedy)
             )
@@ -176,24 +181,30 @@ class DeepQAgent:
             self.jeu.dyn_env = dyn_env
             self.t = 0
             while self.t < self.T:
-                self.t+=1
+                self.t += 1
                 self.jeu.update(self.memory,self.t)
                 self.memory.theta.append(self.model.parameters)
                 if self.t == (self.T):
                     self.memory.terminals.append(True)
                     print("Final Reward: ",self.memory.rewards[-1])
-                else: self.memory.terminals.append(False)
+                else: 
+                    self.memory.terminals.append(False)
                 self.jeu.draw()
+                if len(self.memory.states) >= BATCH_SIZE:
+                    self.optimize_model()
+                for car in dyn_env.cars:
+                    if car.collision:return
 
-    def etape2(self):
+    def optimize_model(self):
+
         self.optimizer.zero_grad()
-        cones,speeds,goals,next_cones,next_speeds,next_goals,actions,rewards,terminals = self.memory.sample(32)
+        cones,speeds,goals,next_cones,next_speeds,next_goals,actions,rewards,terminals = self.memory.sample(BATCH_SIZE)
         mask = torch.tensor((1. - terminals.astype(float)))
         predicted = self.model(next_cones,next_speeds,next_goals)
         maxi = torch.max(predicted,dim=1).values.view(-1).detach()
         y = rewards + mask * self.gamma * maxi
         y_predicted = self.model(cones,speeds,goals)
-        rewards_predicted = y_predicted[torch.arange(32),actions].type(torch.float64)
+        rewards_predicted = y_predicted[torch.arange(BATCH_SIZE),actions].type(torch.float64)
         loss = self.criterion(y,rewards_predicted)
         loss.backward()
 
@@ -202,13 +213,13 @@ class DeepQAgent:
         if self.iter % SAVE_EVERY==0:
             torch.save(self.model.state_dict(), "./weights")
         
-    def loop(self):
-        for i in range(1000):
+    def loop(self, nb_epoch):
+
+        for _ in range(nb_epoch):
             self.iter+=1
             #self.memoire = Memory()
             self.etape1()
-            self.etape2()
-            self.epsgreedy.eps=max(EPS_DECAY*self.epsgreedy.eps,EPS_MIN)
+            self.epsgreedy.eps=max(EPS_DECAY*self.epsgreedy.eps, EPS_MIN)
         pass
         pygame.quit()
 
@@ -220,5 +231,5 @@ parser = argparse.ArgumentParser(
 parser.add_argument('-f', '--filename')
 args = parser.parse_args()
 
-d = DeepQAgent(k=1,T = 300, gamma=0.99,weight_path=args.filename)
-d.loop()
+d = DeepQAgent(game_per_epoch=1, T=300, gamma=0.99, weight_path=args.filename)
+d.loop(NB_EPOCH)
