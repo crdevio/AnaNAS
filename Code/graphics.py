@@ -169,7 +169,6 @@ class DeepQAgent:
             self.policy_model.load_state_dict(torch.load(weight_path, weights_only=True))
             self.target_model.load_state_dict(torch.load(weight_path,weights_only=True))
         self.policy_optimizer = optim.Adam(self.policy_model.parameters(),lr = lr)
-        self.target_optimizer = optim.Adam(self.target_model.parameters(),lr = lr)
         self.policy_epsgreedy = EpsilonGreedy(self.policy_model,EPS_START)
 
         self.jeu = None
