@@ -13,6 +13,8 @@ from ia import DQN,EpsilonGreedy,EPS_START,EPS_DECAY,EPS_MIN
 import sys
 import argparse
 
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
 RES_AFFICHAGE = (600,600)
 FPS = 600 
 CAMERA_SPEED = 100
@@ -162,8 +164,8 @@ class DeepQAgent:
         self.game_per_epoch = game_per_epoch
         self.iter = 0
         self.T = T
-        self.policy_model = DQN(INPUT_SAMPLE,4)
-        self.target_model = DQN(INPUT_SAMPLE,4)
+        self.policy_model = DQN(INPUT_SAMPLE,4).to(DEVICE)
+        self.target_model = DQN(INPUT_SAMPLE,4).to(DEVICE)
 
         if weight_path != None: 
             self.policy_model.load_state_dict(torch.load(weight_path, weights_only=True))
@@ -213,10 +215,14 @@ class DeepQAgent:
         self.policy_optimizer.zero_grad()
         cones,speeds,goals,next_cones,next_speeds,next_goals,actions,rewards,terminals = self.memory.sample(BATCH_SIZE)
         mask = torch.tensor((1. - terminals.astype(float)))
-        target_value = torch.max(self.target_model(cones, speeds,goals), dim=1)[0]
-        y = rewards + mask * self.gamma * target_value
+        cones = cones.to(DEVICE)
+        speeds = speeds.to(DEVICE)
+        goals = goals.to(DEVICE)
+        mask = torch.tensor((1. - terminals.astype(float))).to(DEVICE)
+        target_value = torch.max(self.target_model(cones, speeds,goals), dim=1)[0].to(DEVICE)
+        y = rewards.to(DEVICE) + mask * self.gamma * target_value
         y_predicted = self.policy_model(cones,speeds,goals)
-        rewards_predicted = y_predicted[torch.arange(BATCH_SIZE),actions].type(torch.float64)
+        rewards_predicted = y_predicted[torch.arange(BATCH_SIZE),actions.to(DEVICE)].type(torch.float64).to(DEVICE)
         loss = self.criterion(y,rewards_predicted)
         loss.backward()
 
