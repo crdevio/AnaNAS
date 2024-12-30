@@ -154,7 +154,7 @@ dyn_env.add_car(Voiture(position=(40,40),ia=True))
 
 class DeepQAgent:
 
-    def __init__(self, T=100, game_per_epoch = 10, gamma=0.5, lr = 0.01, weight_path = None, do_opti = True):
+    def __init__(self, T=100,game_per_epoch = 10, gamma=0.5, lr = 0.01, weight_path = None, do_opti = True, target_update_freq = 50):
 
         self.memory = Memory()
         self.t = 0
@@ -162,22 +162,29 @@ class DeepQAgent:
         self.game_per_epoch = game_per_epoch
         self.iter = 0
         self.T = T
-        self.model = DQN(INPUT_SAMPLE,4)
+        self.policy_model = DQN(INPUT_SAMPLE,4)
+        self.target_model = DQN(INPUT_SAMPLE,4)
+
         if weight_path != None: 
-            self.model.load_state_dict(torch.load(weight_path, weights_only=True))
-        self.optimizer = optim.Adam(self.model.parameters(),lr = lr)
-        self.epsgreedy = EpsilonGreedy(self.model,EPS_START)
+            self.policy_model.load_state_dict(torch.load(weight_path, weights_only=True))
+            self.target_model.load_state_dict(torch.load(weight_path,weights_only=True))
+        self.policy_optimizer = optim.Adam(self.policy_model.parameters(),lr = lr)
+        self.target_optimizer = optim.Adam(self.target_model.parameters(),lr = lr)
+        self.policy_epsgreedy = EpsilonGreedy(self.policy_model,EPS_START)
+
         self.jeu = None
         self.gamma = gamma
         self.criterion = nn.HuberLoss()
         self.do_opti = do_opti
+        self.update_freq_delay = 0
+        self.target_update_freq = target_update_freq
 
     def etape1(self):
 
         self.jeu = Simulation(static_url="output/straight.png",dyn_env = None)
         for _ in range(self.game_per_epoch):
             dyn_env = DynamicEnvironnement(
-                lambda cone,speed,car: ia.decide(cone,speed,car,self.epsgreedy,self.model,self.do_opti)
+                lambda cone,speed,car: ia.decide(cone,speed,car,self.policy_epsgreedy,self.policy_model,self.do_opti)
             )
             dyn_env.add(RedLightGreenLight((100,100),2,5))
             dyn_env.add_car(Voiture(position=(80,40),ia=True, goal=GOAL))
@@ -186,7 +193,7 @@ class DeepQAgent:
             while self.t < self.T:
                 self.t += 1
                 self.jeu.update(self.memory,self.t,self)
-                self.memory.theta.append(self.model.parameters)
+                self.memory.theta.append(self.policy_model.parameters)
                 if self.t == (self.T):
                     self.memory.terminals.append(True)
                     print("Final Reward: ",self.memory.rewards[-1])
@@ -197,24 +204,27 @@ class DeepQAgent:
                     self.optimize_model()
                 for car in dyn_env.cars:
                     if car.collision:return
+                self.update_freq_delay+=1
+                if self.update_freq_delay >= self.target_update_freq:
+                    self.target_model.load_state_dict(self.policy_model.state_dict())
+                    self.update_freq_delay=0
 
     def optimize_model(self):
 
-        self.optimizer.zero_grad()
+        self.policy_optimizer.zero_grad()
         cones,speeds,goals,next_cones,next_speeds,next_goals,actions,rewards,terminals = self.memory.sample(BATCH_SIZE)
         mask = torch.tensor((1. - terminals.astype(float)))
-        predicted = self.model(next_cones,next_speeds,next_goals)
-        maxi = torch.max(predicted,dim=1).values.view(-1).detach()
-        y = rewards + mask * self.gamma * maxi
-        y_predicted = self.model(cones,speeds,goals)
+        target_value = torch.max(self.target_model(cones, speeds,goals), dim=1)[0]
+        y = rewards + mask * self.gamma * target_value
+        y_predicted = self.policy_model(cones,speeds,goals)
         rewards_predicted = y_predicted[torch.arange(BATCH_SIZE),actions].type(torch.float64)
         loss = self.criterion(y,rewards_predicted)
         loss.backward()
 
-        print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.epsgreedy.eps}")
-        self.optimizer.step()
+        print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.policy_epsgreedy.eps}")
+        self.policy_optimizer.step()
         if self.iter % SAVE_EVERY==0:
-            torch.save(self.model.state_dict(), "./weights")
+            torch.save(self.policy_model.state_dict(), "./weights")
         
     def loop(self, nb_epoch):
 
@@ -222,7 +232,7 @@ class DeepQAgent:
             self.iter+=1
             #self.memoire = Memory()
             self.etape1()
-            self.epsgreedy.eps=max(EPS_DECAY*self.epsgreedy.eps, EPS_MIN)
+            self.policy_epsgreedy.eps=max(EPS_DECAY*self.policy_epsgreedy.eps, EPS_MIN)
         pass
         pygame.quit()
 
@@ -234,5 +244,5 @@ parser = argparse.ArgumentParser(
 parser.add_argument('-f', '--filename')
 args = parser.parse_args()
 
-d = DeepQAgent(game_per_epoch=1, T=300, gamma=0.99, weight_path=args.filename,do_opti=False)
+d = DeepQAgent(game_per_epoch=1, T=300, gamma=0.99, weight_path=args.filename,do_opti=True)
 d.loop(NB_EPOCH)

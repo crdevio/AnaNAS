@@ -80,9 +80,9 @@ def reward(voiture,pos_avant):
     d_before = np.linalg.norm(voiture.goal - pos_avant)
     d_after = np.linalg.norm(voiture.goal - np.array([voiture.x_position,voiture.y_position]))
     return - (d_after - d_before)
-model = DQN(3923,4)
-greedy = EpsilonGreedy(model,EPS_START)
-t = 0
+#model = DQN(3923,4)
+#greedy = EpsilonGreedy(model,EPS_START)
+#t = 0
 
 
 
