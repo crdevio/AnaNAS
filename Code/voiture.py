@@ -33,11 +33,12 @@ class Voiture(Dynamic):
 
         #Pour l'instant le cone va en fait se transformer en rectangle. C'est les coordonées si la voiture est centrée en 0
         self.cone = []
-        for i in range(0 + LONGUEUR // 2, 51 + LONGUEUR // 2):
+        for i in range(0 + LONGUEUR // 2, 101 + LONGUEUR // 2):
             self.cone.append([])
-            for j in range(-12, 13):
+            for j in range(-25, 26):
                 self.cone[-1].append([i, j])
         self.cone = np.array(self.cone, int)
+        print(self.cone.shape)
                     
 
     def update(self, dt, events):

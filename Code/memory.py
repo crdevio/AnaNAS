@@ -13,7 +13,7 @@ class Memory:
         #self.theta = deque([], maxlen = MEM_SIZE)
         #States contient cone, vitesse, goal sous forme de tuple. Il faut couper en trois pour optimiser le calcul
         #On verra plus tard mais peut-être que c'est encore mieux de faire des torch.tensor
-        self.cone = torch.zeros((MEM_SIZE, 51, 25, 3), dtype=torch.float32)
+        self.cone = torch.zeros((MEM_SIZE, 101, 51, 3), dtype=torch.float32)
         self.vitesse = torch.zeros((MEM_SIZE,), dtype=torch.float32)
         self.goal = torch.zeros((MEM_SIZE,2), dtype=torch.float32)
         self.actions = torch.zeros((MEM_SIZE,), dtype=torch.int32)
