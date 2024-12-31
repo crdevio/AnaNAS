@@ -1,4 +1,3 @@
-# Example file showing a basic pygame "game loop"
 import pygame
 from dynamic import *
 from voiture import *
@@ -11,7 +10,6 @@ import torch.nn as nn
 from memory import Memory
 from ia import DQN,EpsilonGreedy,EPS_START,EPS_DECAY,EPS_MIN,DEVICE
 import sys
-import argparse
 
 RES_AFFICHAGE = (600,600)
 FPS = 600 
@@ -210,6 +208,8 @@ class DeepQAgent:
 
     def optimize_model(self):
 
+        print(len(self.memory.theta), len(self.memory.states), len(self.memory.actions), len(self.memory.rewards), len(self.memory.terminals))
+
         self.policy_optimizer.zero_grad()
         cones,speeds,goals,next_cones,next_speeds,next_goals,actions,rewards,terminals = self.memory.sample(BATCH_SIZE)
         mask = torch.tensor((1. - terminals.astype(float)))
@@ -238,14 +238,3 @@ class DeepQAgent:
             self.policy_epsgreedy.eps=max(EPS_DECAY*self.policy_epsgreedy.eps, EPS_MIN)
         pass
         pygame.quit()
-
-
-parser = argparse.ArgumentParser(
-                    prog='ProgramName',
-                    description='What the program does',
-                    epilog='Text at the bottom of help')
-parser.add_argument('-f', '--filename')
-args = parser.parse_args()
-
-d = DeepQAgent(game_per_epoch=1, T=300, gamma=0.99, weight_path=args.filename,do_opti=True)
-d.loop(NB_EPOCH)
