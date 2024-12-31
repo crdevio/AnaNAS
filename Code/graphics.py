@@ -16,7 +16,7 @@ FPS = 600
 CAMERA_SPEED = 100
 GOAL = (400,40) #(140,122)
 SAVE_EVERY = 10
-INPUT_SAMPLE = 2048
+INPUT_SAMPLE = 1200
 NB_EPOCH = 1000
 BATCH_SIZE = 2
 
@@ -70,7 +70,7 @@ class Simulation:
                 self.camera.move_down(CAMERA_SPEED * dt)
         self.dyn_env.update_env(dt,keys)
         image_array = pygame.surfarray.array3d(pygame.display.get_surface())
-        self.dyn_env.decisions(image_array,mem,t)
+        return self.dyn_env.decisions(image_array,mem,t)
     def draw(self):
         if not self.drawing: return
         if self.static_img == None:
@@ -189,15 +189,13 @@ class DeepQAgent:
             self.t = 0
             while self.t < self.T:
                 self.t += 1
-                self.jeu.update(self.memory,self.t,self)
-                self.memory.theta.append(self.policy_model.parameters)
+                cone, vitesse, goal, actions, rewards = self.jeu.update(self.memory,self.t,self)
+                is_terminal = False
                 if self.t == (self.T):
-                    self.memory.terminals.append(True)
+                    is_terminal = True
                     print("Final Reward: ",self.memory.rewards[-1])
-                else: 
-                    self.memory.terminals.append(False)
                 self.jeu.draw()
-                if len(self.memory.states) >= BATCH_SIZE and self.do_opti:
+                if self.memory.size >= BATCH_SIZE and self.do_opti:
                     self.optimize_model()
                 for car in dyn_env.cars:
                     if car.collision:return
@@ -205,10 +203,9 @@ class DeepQAgent:
                 if self.update_freq_delay >= self.target_update_freq:
                     self.target_model.load_state_dict(self.policy_model.state_dict())
                     self.update_freq_delay=0
+                self.memory.append(cone, vitesse, goal, actions, rewards, is_terminal)
 
     def optimize_model(self):
-
-        print(len(self.memory.theta), len(self.memory.states), len(self.memory.actions), len(self.memory.rewards), len(self.memory.terminals))
 
         self.policy_optimizer.zero_grad()
         cones,speeds,goals,next_cones,next_speeds,next_goals,actions,rewards,terminals = self.memory.sample(BATCH_SIZE)

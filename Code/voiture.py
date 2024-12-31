@@ -21,6 +21,7 @@ LARGEUR_CONE = 32
 
 class Voiture(Dynamic):
     def __init__(self, position = (0,0), ia = True, goal = (200,200)):
+
         self.x_position = position[0]
         self.y_position = position[1]
         self.orientation = 0 #C'est en radient, son vecteur d'orientation sera donc (cos(orientation), sin(orientation))
@@ -30,6 +31,13 @@ class Voiture(Dynamic):
         self.goal = goal
         self.up,self.down,self.left,self.right = 0,0,0,0
 
+        #Pour l'instant le cone va en fait se transformer en rectangle. C'est les coordonées si la voiture est centrée en 0
+        self.cone = []
+        for i in range(0 + LONGUEUR // 2, 51 + LONGUEUR // 2):
+            self.cone.append([])
+            for j in range(-12, 13):
+                self.cone[-1].append([i, j])
+        self.cone = np.array(self.cone, int)
                     
 
     def update(self, dt, events):
@@ -81,6 +89,8 @@ class Voiture(Dynamic):
 
     def get_cone(self):
 
+        '''
+        
         cone_actuel = []
 
         for i in range(RAYON_CONE):
@@ -95,6 +105,24 @@ class Voiture(Dynamic):
                 cone_actuel[-1].append([int(x),int(y)])
 
         return cone_actuel
+
+        '''
+
+        #Il faut calculer le centre de la voiture, faire la rotation et ajouter le centre
+
+        x_avant_gauche = self.x_position + LONGUEUR * cos(self.orientation)
+        y_avant_gauche = self.y_position + LONGUEUR * sin(self.orientation)
+
+        x_avant_droite = x_avant_gauche - LARGEUR * sin(self.orientation)
+        y_avant_droite = y_avant_gauche + LARGEUR * cos(self.orientation)
+
+        x_milieu = (x_avant_droite + self.x_position) / 2
+        y_milieu = (y_avant_droite + self.y_position) / 2
+
+        matrice_rotation = np.array([[cos(self.orientation), sin(self.orientation)], [-sin(self.orientation), cos(self.orientation)]])
+
+        return self.cone @ matrice_rotation + np.array([x_milieu, y_milieu])
+        
     
     def get_inputs(self,inputs):
         if self.ia:

@@ -1,5 +1,6 @@
 import ia
 import torch
+import numpy as np
 
 
 class Dynamic:
@@ -42,18 +43,21 @@ class DynamicEnvironnement:
         return (self.dynamic_objects[index] if index < len(self.dynamic_objects) else self.cars[index - len(self.dynamic_objects)])
     
     def decisions(self,img,mem,t):
-        L,l = len(img),len(img[0])
+        img_np = np.array(img)
+        to_compare = np.zeros((51, 25, 1, 2))
+        to_compare[:, :, :, 0] = img_np.shape[0] - 1
+        to_compare[:, :, :, 1] = img_np.shape[1] - 1
         """
         Appelé QUE SI ia est activé
         """
-        for e in self.cars:
-            cone = e.get_cone()
-            cone = [[img[min(int(c[0]),L-1)][min(int(c[1]),l-1)] for c in x] for x in cone]
-            mem.states.append((cone,e.vitesse,e.get_relative_goal_position()))
-            inputs = self.decide(cone,e.vitesse,e)
-            mem.actions.append(torch.argmax(inputs))
-            mem.rewards.append(ia.state_reward(e))
-            e.get_inputs(inputs)
+        for car in self.cars:
+            cone = car.get_cone()
+            print(cone.shape)
+            cone = np.int32(np.max(np.concatenate((cone.reshape(51, 25, 1, 2), to_compare), axis=2), axis=2))
+            cone = img_np[cone[:, :, 0], cone[:, :, 1]]
+            inputs = self.decide(cone,car.vitesse,car)
+            car.get_inputs(inputs)
+            return (cone, car.vitesse, car.get_relative_goal_position(), torch.argmax(inputs), ia.state_reward(car))
     def update_env(self,delta_t, keys = None):
         for i in self:
             i.update(delta_t, keys)
