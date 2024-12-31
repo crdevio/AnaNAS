@@ -9,11 +9,9 @@ import torch
 import torch.optim as optim
 import torch.nn as nn
 from memory import Memory
-from ia import DQN,EpsilonGreedy,EPS_START,EPS_DECAY,EPS_MIN
+from ia import DQN,EpsilonGreedy,EPS_START,EPS_DECAY,EPS_MIN,DEVICE
 import sys
 import argparse
-
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 RES_AFFICHAGE = (600,600)
 FPS = 600 

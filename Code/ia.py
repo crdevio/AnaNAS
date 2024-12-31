@@ -6,6 +6,8 @@ from memory import Memory
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
+print(f"Using {DEVICE} device")
+
 EPS_START = 1.
 EPS_DECAY = 0.95
 EPS_MIN = 0.1
