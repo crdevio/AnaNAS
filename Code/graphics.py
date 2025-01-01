@@ -5,6 +5,7 @@ from graphics_classes import Camera,Polygon
 import numpy as np
 import pygame.surfarray
 import torch
+import random
 import torch.optim as optim
 import torch.nn as nn
 from memory import Memory
@@ -20,6 +21,11 @@ INPUT_SAMPLE = 5000
 NB_EPOCH = 1000
 BATCH_SIZE = 2
 SHOW_INFO_EVERY = 100
+
+STATIC_URLS = {"output/straight.png":(400,40),
+               "output/short.png" : (150,40)}
+
+STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
 
 pygame.init()
@@ -178,8 +184,11 @@ class DeepQAgent:
         self.target_update_freq = target_update_freq
 
     def etape1(self):
+        global GOAL
 
-        self.jeu = Simulation(static_url="output/straight.png",dyn_env = None)
+        static_url = STATIC_URLS_LIST[random.randint(0,len(STATIC_URLS_LIST)-1)]
+        self.jeu = Simulation(static_url=static_url,dyn_env = None)
+        GOAL = STATIC_URLS[static_url]
         for _ in range(self.game_per_epoch):
             dyn_env = DynamicEnvironnement(
                 lambda cone,speed,car: ia.decide(cone,speed,car,self.policy_epsgreedy,self.policy_model,self.do_opti)
@@ -194,7 +203,7 @@ class DeepQAgent:
                 is_terminal = False
                 if self.t == (self.T):
                     is_terminal = True
-                    print("Final Reward: ",self.memory.rewards[-1])
+                    print("Final Reward: ",self.memory.rewards[self.memory.mem_index-1])
                 self.jeu.draw()
                 if self.memory.size >= BATCH_SIZE and self.do_opti:
                     self.optimize_model()
