@@ -22,6 +22,7 @@ NB_EPOCH = 1000
 BATCH_SIZE = 2
 SHOW_INFO_EVERY = 100
 
+#mettre dedans les urls des fichiers et leur goal
 STATIC_URLS = {"output/straight.png":(400,40),
                "output/short.png" : (150,40),
                "output/curved.png" : (130,120)}
