@@ -6,7 +6,8 @@ parser = argparse.ArgumentParser(
                     description='What the program does',
                     epilog='Text at the bottom of help')
 parser.add_argument('-f', '--filename')
+parser.add_argument('-eps', '--epsilon', type=float)
 args = parser.parse_args()
 
-d = DeepQAgent(game_per_epoch=1, T=500, gamma=0.995, weight_path=args.filename,do_opti=True)
+d = DeepQAgent(game_per_epoch=1, T=500, gamma=0.995, weight_path=args.filename,do_opti=True,eps=float(args.epsilon))
 d.loop(NB_EPOCH)

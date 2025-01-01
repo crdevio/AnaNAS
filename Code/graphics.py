@@ -148,7 +148,7 @@ dyn_env.add_car(Voiture(position=(40,40),ia=True))
 
 class DeepQAgent:
 
-    def __init__(self, T=100,game_per_epoch = 10, gamma=0.5, lr = 0.01, weight_path = None, do_opti = True, target_update_freq = 50):
+    def __init__(self, T=100,game_per_epoch = 10, gamma=0.5, lr = 0.01, weight_path = None, do_opti = True, target_update_freq = 50, eps = None):
 
         self.memory = Memory()
         self.t = 0
@@ -158,12 +158,15 @@ class DeepQAgent:
         self.T = T
         self.policy_model = DQN(INPUT_SAMPLE,4).to(DEVICE)
         self.target_model = DQN(INPUT_SAMPLE,4).to(DEVICE)
+        eps_start = EPS_START
+        if eps!=None:
+            eps_start = eps
 
         if weight_path != None: 
             self.policy_model.load_state_dict(torch.load(weight_path, weights_only=True))
             self.target_model.load_state_dict(torch.load(weight_path,weights_only=True))
         self.policy_optimizer = optim.Adam(self.policy_model.parameters(),lr = lr)
-        self.policy_epsgreedy = EpsilonGreedy(self.policy_model,EPS_START)
+        self.policy_epsgreedy = EpsilonGreedy(self.policy_model,eps_start)
 
         self.jeu = None
         self.gamma = gamma
