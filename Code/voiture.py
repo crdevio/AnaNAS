@@ -38,7 +38,6 @@ class Voiture(Dynamic):
             for j in range(-25, 26):
                 self.cone[-1].append([i, j])
         self.cone = np.array(self.cone, int)
-        print(self.cone.shape)
                     
 
     def update(self, dt, events):

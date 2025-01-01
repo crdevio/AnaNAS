@@ -26,8 +26,6 @@ while True:
         events.append(pygame.K_LEFT)
     ma_voiture.update(events)
 
-    print(ma_voiture.x_position, ma_voiture.y_position)
-
     screen.fill("purple")
 
     rect = pygame.Rect(ma_voiture.x_position, ma_voiture.y_position, 5, 5)

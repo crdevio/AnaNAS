@@ -19,6 +19,7 @@ SAVE_EVERY = 10
 INPUT_SAMPLE = 5000
 NB_EPOCH = 1000
 BATCH_SIZE = 2
+SHOW_INFO_EVERY = 100
 
 
 pygame.init()
@@ -221,7 +222,7 @@ class DeepQAgent:
         loss = self.criterion(y,rewards_predicted)
         loss.backward()
 
-        print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.policy_epsgreedy.eps}")
+        if self.t%SHOW_INFO_EVERY==0:print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.policy_epsgreedy.eps}")
         self.policy_optimizer.step()
         if self.iter % SAVE_EVERY==0:
             torch.save(self.policy_model.state_dict(), "./weights")

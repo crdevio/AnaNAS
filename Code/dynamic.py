@@ -52,7 +52,6 @@ class DynamicEnvironnement:
         """
         for car in self.cars:
             cone = car.get_cone()
-            print(cone.shape)
             cone = np.int32(np.max(np.concatenate((cone.reshape(101, 51, 1, 2), to_compare), axis=2), axis=2))
             cone = img_np[cone[:, :, 0], cone[:, :, 1]]
             inputs = self.decide(cone,car.vitesse,car)

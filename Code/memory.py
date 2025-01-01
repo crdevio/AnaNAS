@@ -18,7 +18,7 @@ class Memory:
         self.goal = torch.zeros((MEM_SIZE,2), dtype=torch.float32)
         self.actions = torch.zeros((MEM_SIZE,), dtype=torch.int32)
         self.rewards = torch.zeros((MEM_SIZE,), dtype=torch.float32)
-        self.terminals = np.zeros((MEM_SIZE,), dtype=np.bool)
+        self.terminals = np.zeros((MEM_SIZE,), dtype=bool)
 
         '''
         self.states = deque([], maxlen = MEM_SIZE)
