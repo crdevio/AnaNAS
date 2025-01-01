@@ -31,6 +31,37 @@ class StraightRoad(Static):
     def draw_self(self,draw):
         draw.polygon(self.vertices, fill="white")
 
+class CurvedRoad(Static):
+    def __init__(self, pos, radius, width, start_angle, end_angle):
+        super().__init__(pos)
+        self.radius = radius
+        self.width = width
+        self.start_angle = start_angle
+        self.end_angle = end_angle
+
+        # Generate inner and outer arcs
+        inner_arc = [
+            (
+                pos[0] + (radius * np.cos(angle)),
+                pos[1] + (radius * np.sin(angle))
+            )
+            for angle in np.linspace(start_angle, end_angle, num=100)
+        ]
+        outer_arc = [
+            (
+                pos[0] + ((radius + width) * np.cos(angle)),
+                pos[1] + ((radius + width) * np.sin(angle))
+            )
+            for angle in np.linspace(end_angle, start_angle, num=100)
+        ]
+
+        # Combine arcs to create a closed polygon
+        self.vertices = inner_arc + outer_arc
+
+    def draw_self(self, draw):
+        draw.polygon(self.vertices, fill="white")
+
+
 
 class StaticEnvironnement:
     def __init__(self) -> None:
@@ -55,5 +86,5 @@ static_env.add(StraightRoad((135,25),LARGEUR_ROUTE,80,np.pi/2))
 static_env.add(StraightRoad((40,25),LARGEUR_ROUTE,80,np.pi/2))
 static_env.add(StraightRoad((25,120),LARGEUR_ROUTE,125,0))
 """
-static_env.add(StraightRoad((40, 40), LARGEUR_ROUTE,150,0))
-generate_images(static_env,500,500,file='output/short.png')
+static_env.add(CurvedRoad((40,130),80,50,0,-np.pi/2))
+generate_images(static_env,500,500,file='output/curved.png')

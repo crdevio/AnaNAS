@@ -23,7 +23,8 @@ BATCH_SIZE = 2
 SHOW_INFO_EVERY = 100
 
 STATIC_URLS = {"output/straight.png":(400,40),
-               "output/short.png" : (150,40)}
+               "output/short.png" : (150,40),
+               "output/curved.png" : (130,120)}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
@@ -137,24 +138,11 @@ class Simulation:
                         car.collision = True
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)
         pygame.draw.circle(self.screen,"red",(GOAL[0]-self.camera.x,GOAL[1]-self.camera.y),2)
-        if self.dyn_env.cars[0].ia:
-            text = "Decision: "
-            if self.dyn_env.cars[0].up:
-                text+="UP "
-            if self.dyn_env.cars[0].down:
-                text+="DOWN "
-            if self.dyn_env.cars[0].left:
-                text+="LEFT "
-            if self.dyn_env.cars[0].right:
-                text+="RIGHT "
-            text_surface = font.render(text, True, (255, 0,0))  # True for anti-aliasing
-            self.screen.blit(text_surface, (200, 200))
         pygame.display.flip()
 
        
 dyn_env = DynamicEnvironnement()
 
-dyn_env.add(RedLightGreenLight((100,100),2,5))
 dyn_env.add_car(Voiture(position=(40,40),ia=True))
 
 class DeepQAgent:
@@ -193,7 +181,6 @@ class DeepQAgent:
             dyn_env = DynamicEnvironnement(
                 lambda cone,speed,car: ia.decide(cone,speed,car,self.policy_epsgreedy,self.policy_model,self.do_opti)
             )
-            dyn_env.add(RedLightGreenLight((100,100),2,5))
             dyn_env.add_car(Voiture(position=(80,40),ia=True, goal=GOAL))
             self.jeu.dyn_env = dyn_env
             self.t = 0
