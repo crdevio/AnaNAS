@@ -19,10 +19,11 @@ GOAL = (400,40) #(140,122)
 SAVE_EVERY = 10
 MODEL_UPDATE_EVERY = 4
 INPUT_SAMPLE = 5000
-NB_EPOCH = 1000
+NB_EPOCH = 10000
 BATCH_SIZE = 32
-SHOW_INFO_EVERY = 100
+SHOW_INFO_EVERY = 500
 WARMUP_PHASE = 2000  #20 000 dans le TP
+TEST_EVRY = 100
 
 #mettre dedans les urls des fichiers et leur goal
 STATIC_URLS = {"output/straight.png":(400,40),
@@ -150,7 +151,7 @@ dyn_env.add_car(Voiture(position=(40,40),ia=True))
 
 class DeepQAgent:
     #dans le TP, lr = 1e-4
-    def __init__(self, T=100,game_per_epoch = 10, gamma=0.5, lr = 1e-3, weight_path = None, do_opti = True, target_update_freq = 50, eps = None):
+    def __init__(self, T=100,game_per_epoch = 10, gamma=0.5, lr = 1e-3, weight_path = None, do_opti = True, target_update_freq = 1000, eps = None):
 
         self.memory = Memory()
         self.t = 0
@@ -180,8 +181,15 @@ class DeepQAgent:
 
     def etape1(self):
         global GOAL
+        mode = "train"
 
         static_url = STATIC_URLS_LIST[random.randint(0,len(STATIC_URLS_LIST)-1)]
+        if self.iter%TEST_EVRY <= len(STATIC_URLS_LIST)-1 and self.global_t>=WARMUP_PHASE:
+            mode = "test"
+            static_url = STATIC_URLS_LIST[self.iter%TEST_EVRY]
+            self.policy_epsgreedy.eps = 0
+            print("TEST situation number",self.iter%TEST_EVRY)
+
         self.jeu = Simulation(static_url=static_url,dyn_env = None)
         GOAL = STATIC_URLS[static_url]
         for _ in range(self.game_per_epoch):
@@ -203,7 +211,10 @@ class DeepQAgent:
                 if self.global_t>=WARMUP_PHASE and self.do_opti and self.global_t%MODEL_UPDATE_EVERY==0:
                     self.optimize_model()
                 for car in dyn_env.cars:
-                    if car.collision:return
+                    if car.collision:
+                        if mode=="test":
+                            print("CRASH")
+                        return
                 self.update_freq_delay+=1
                 if self.update_freq_delay >= self.target_update_freq:
                     self.target_model.load_state_dict(self.policy_model.state_dict())
@@ -228,15 +239,19 @@ class DeepQAgent:
 
         if self.global_t%SHOW_INFO_EVERY==0:print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.policy_epsgreedy.eps}")
         self.policy_optimizer.step()
-        if self.iter % SAVE_EVERY==0:
-            torch.save(self.policy_model.state_dict(), "./weights")
         
     def loop(self, nb_epoch):
+
+        eps = self.policy_epsgreedy.eps
 
         for _ in range(nb_epoch):
             self.iter+=1
             #self.memoire = Memory()
             self.etape1()
-            if self.global_t>=WARMUP_PHASE:self.policy_epsgreedy.eps=max(self.policy_epsgreedy.eps-EPS_DECAY, EPS_MIN)
+            if self.global_t>=WARMUP_PHASE:eps=max(eps-EPS_DECAY, EPS_MIN)
+            self.policy_epsgreedy.eps = eps
+            if self.iter % SAVE_EVERY==0:
+                torch.save(self.policy_model.state_dict(), "./weights")
+                print("saved")
         pass
         pygame.quit()
