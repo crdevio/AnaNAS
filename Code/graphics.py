@@ -17,10 +17,12 @@ FPS = 600
 CAMERA_SPEED = 100
 GOAL = (400,40) #(140,122)
 SAVE_EVERY = 10
+MODEL_UPDATE_EVERY = 4
 INPUT_SAMPLE = 5000
 NB_EPOCH = 1000
-BATCH_SIZE = 2
+BATCH_SIZE = 32
 SHOW_INFO_EVERY = 100
+WARMUP_PHASE = 2000  #20 000 dans le TP
 
 #mettre dedans les urls des fichiers et leur goal
 STATIC_URLS = {"output/straight.png":(400,40),
@@ -147,8 +149,8 @@ dyn_env = DynamicEnvironnement()
 dyn_env.add_car(Voiture(position=(40,40),ia=True))
 
 class DeepQAgent:
-
-    def __init__(self, T=100,game_per_epoch = 10, gamma=0.5, lr = 0.01, weight_path = None, do_opti = True, target_update_freq = 50, eps = None):
+    #dans le TP, lr = 1e-4
+    def __init__(self, T=100,game_per_epoch = 10, gamma=0.5, lr = 1e-3, weight_path = None, do_opti = True, target_update_freq = 50, eps = None):
 
         self.memory = Memory()
         self.t = 0
@@ -169,6 +171,7 @@ class DeepQAgent:
         self.policy_epsgreedy = EpsilonGreedy(self.policy_model,eps_start)
 
         self.jeu = None
+        self.global_t = 0
         self.gamma = gamma
         self.criterion = nn.HuberLoss()
         self.do_opti = do_opti
@@ -190,13 +193,14 @@ class DeepQAgent:
             self.t = 0
             while self.t < self.T:
                 self.t += 1
+                self.global_t+=1
                 cone, vitesse, goal, actions, rewards = self.jeu.update(self.memory,self.t,self)
                 is_terminal = False
                 if self.t == (self.T):
                     is_terminal = True
                     print("Final Reward: ",self.memory.rewards[self.memory.mem_index-1])
                 self.jeu.draw()
-                if self.memory.size >= BATCH_SIZE and self.do_opti:
+                if self.global_t>=WARMUP_PHASE and self.do_opti and self.global_t%MODEL_UPDATE_EVERY==0:
                     self.optimize_model()
                 for car in dyn_env.cars:
                     if car.collision:return
@@ -222,7 +226,7 @@ class DeepQAgent:
         loss = self.criterion(y,rewards_predicted)
         loss.backward()
 
-        if self.t%SHOW_INFO_EVERY==0:print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.policy_epsgreedy.eps}")
+        if self.global_t%SHOW_INFO_EVERY==0:print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.policy_epsgreedy.eps}")
         self.policy_optimizer.step()
         if self.iter % SAVE_EVERY==0:
             torch.save(self.policy_model.state_dict(), "./weights")
@@ -233,6 +237,6 @@ class DeepQAgent:
             self.iter+=1
             #self.memoire = Memory()
             self.etape1()
-            self.policy_epsgreedy.eps=max(EPS_DECAY*self.policy_epsgreedy.eps, EPS_MIN)
+            if self.global_t>=WARMUP_PHASE:self.policy_epsgreedy.eps=max(self.policy_epsgreedy.eps-EPS_DECAY, EPS_MIN)
         pass
         pygame.quit()
