@@ -26,9 +26,13 @@ WARMUP_PHASE = 2000  #20 000 dans le TP
 TEST_EVRY = 100
 
 #mettre dedans les urls des fichiers et leur goal
+"""
 STATIC_URLS = {"output/straight.png":(400,40),
                "output/short.png" : (150,40),
                "output/curved.png" : (130,120)}
+"""
+
+STATIC_URLS = {"output/straight.png":(400,40)}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
