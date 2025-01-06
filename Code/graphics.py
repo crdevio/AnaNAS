@@ -196,6 +196,7 @@ class DeepQAgent:
 
         self.jeu = Simulation(static_url=static_url,dyn_env = None)
         GOAL = STATIC_URLS[static_url]
+        is_terminal = False
         for _ in range(self.game_per_epoch):
             dyn_env = DynamicEnvironnement(
                 lambda cone,speed,car: ia.decide(cone,speed,car,self.policy_epsgreedy,self.policy_model,self.do_opti)
@@ -203,22 +204,29 @@ class DeepQAgent:
             dyn_env.add_car(Voiture(position=(80,40),ia=True, goal=GOAL))
             self.jeu.dyn_env = dyn_env
             self.t = 0
-            while self.t < self.T:
+            while self.t < self.T and not is_terminal:
                 self.t += 1
                 self.global_t+=1
-                cone, vitesse, goal, actions, rewards = self.jeu.update(self.memory,self.t,self)
-                is_terminal = False
+                cone, vitesse, goal, actions= self.jeu.update(self.memory,self.t,self)
                 if self.t == (self.T):
                     is_terminal = True
                     print("Final Reward: ",self.memory.rewards[self.memory.mem_index-1])
                 self.jeu.draw()
+                rewards = ia.state_reward(dyn_env.cars[0])
                 if self.global_t>=WARMUP_PHASE and self.do_opti and self.global_t%MODEL_UPDATE_EVERY==0:
                     self.optimize_model()
                 for car in dyn_env.cars:
                     if car.collision:
                         if mode=="test":
                             print("CRASH")
-                        return
+                        is_terminal = True
+                """
+                for car in dyn_env.cars:
+                    if (car.x_position-GOAL[0])**2+(car.y_position-GOAL[1])**2<=10:
+                        if mode=="test":
+                            print("GOAL")
+                        is_terminal = True
+                """
                 self.update_freq_delay+=1
                 if self.update_freq_delay >= self.target_update_freq:
                     self.target_model.load_state_dict(self.policy_model.state_dict())

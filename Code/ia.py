@@ -88,6 +88,7 @@ def decide(cone, speed, car, greedy, model, do_opti):
 
 
 def reward(voiture, pos_avant):
+    print("attention je suis utilisée")
     d_before = np.linalg.norm(voiture.goal - pos_avant)
     d_after = np.linalg.norm(voiture.goal - np.array([voiture.x_position, voiture.y_position]))
     return -(d_after - d_before)

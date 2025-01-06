@@ -56,7 +56,7 @@ class DynamicEnvironnement:
             cone = img_np[cone[:, :, 0], cone[:, :, 1]]
             inputs = self.decide(cone,car.vitesse,car)
             car.get_inputs(inputs)
-            return (cone, car.vitesse, car.get_relative_goal_position(), torch.argmax(inputs), ia.state_reward(car))
+            return (cone, car.vitesse, car.get_relative_goal_position(), torch.argmax(inputs))
     def update_env(self,delta_t, keys = None):
         for i in self:
             i.update(delta_t, keys)
