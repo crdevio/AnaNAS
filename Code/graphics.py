@@ -220,13 +220,12 @@ class DeepQAgent:
                         if mode=="test":
                             print("CRASH")
                         is_terminal = True
-                """
                 for car in dyn_env.cars:
-                    if (car.x_position-GOAL[0])**2+(car.y_position-GOAL[1])**2<=10:
+                    if (car.x_position-GOAL[0])**2+(car.y_position-GOAL[1])**2<=20:
                         if mode=="test":
                             print("GOAL")
                         is_terminal = True
-                """
+                        print("Final Reward: ",self.memory.rewards[self.memory.mem_index-1])
                 self.update_freq_delay+=1
                 if self.update_freq_delay >= self.target_update_freq:
                     self.target_model.load_state_dict(self.policy_model.state_dict())
