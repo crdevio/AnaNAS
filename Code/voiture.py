@@ -6,7 +6,7 @@ from math import cos, sin, pi, atan
 import numpy as np
 
 VITESSE_MAX = 100
-VITESSE_MIN = -20
+VITESSE_MIN = -2
 FROTTEMENT = 0.5
 VITESSE_ROT = 1.2 #C'est des gradient par seconde ou par appuis. A long terme, il faudra vérifier qu'on ne tourne pas trop 
 FPS = 60

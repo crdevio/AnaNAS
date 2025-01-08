@@ -53,6 +53,10 @@ class Memory:
     def sample(self,N):
         idx = np.random.choice(self.size, N, replace=False)
 
+        for i in range(len(idx)):
+            if self.terminals[idx[i-1]]:
+                idx[i]-=1
+
         '''
         cones = np.array([i[0] for i in self.states])[idx]
         speeds = np.array([i[1] for i in self.states])[idx]

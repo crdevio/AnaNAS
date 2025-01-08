@@ -32,7 +32,7 @@ STATIC_URLS = {"output/straight.png":(400,40),
                "output/curved.png" : (130,120)}
 """
 
-STATIC_URLS = {"output/straight.png":(400,40)}
+STATIC_URLS = {"output/straight.png":(120,40)}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
@@ -86,7 +86,7 @@ class Simulation:
                 self.camera.move_down(CAMERA_SPEED * dt)
         self.dyn_env.update_env(dt,keys)
         image_array = pygame.surfarray.array3d(pygame.display.get_surface())
-        return self.dyn_env.decisions(image_array,mem,t)
+        return self.dyn_env.decisions(self.static_arr,mem,t)
     def draw(self):
         if not self.drawing: return
         if self.static_img == None:
@@ -155,7 +155,7 @@ dyn_env.add_car(Voiture(position=(40,40),ia=True))
 
 class DeepQAgent:
     #dans le TP, lr = 1e-4
-    def __init__(self, T=100,game_per_epoch = 10, gamma=0.5, lr = 2e-4, weight_path = None, do_opti = True, target_update_freq = 1000, eps = None):
+    def __init__(self, T=100,game_per_epoch = 10, gamma=0.5, lr = 1e-3, weight_path = None, do_opti = True, target_update_freq = 1000, eps = None):
 
         self.memory = Memory()
         self.t = 0
@@ -237,11 +237,8 @@ class DeepQAgent:
         self.policy_optimizer.zero_grad()
         cones,speeds,goals,next_cones,next_speeds,next_goals,actions,rewards,terminals = self.memory.sample(BATCH_SIZE)
         mask = torch.tensor((1. - terminals.astype(float)))
-        cones = cones.to(DEVICE)
-        speeds = speeds.to(DEVICE)
-        goals = goals.to(DEVICE)
         mask = torch.tensor((1. - terminals.astype(float))).to(DEVICE)
-        target_value = torch.max(self.target_model(cones, speeds,goals), dim=1)[0].to(DEVICE)
+        target_value = torch.max(self.target_model(next_cones, next_speeds,next_goals), dim=1)[0].to(DEVICE)
         y = rewards.to(DEVICE) + mask * self.gamma * target_value
         y_predicted = self.policy_model(cones,speeds,goals)
         rewards_predicted = y_predicted[torch.arange(BATCH_SIZE),actions.to(DEVICE)].type(torch.float64).to(DEVICE)
