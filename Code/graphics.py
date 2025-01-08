@@ -33,7 +33,9 @@ STATIC_URLS = {"output/straight.png":(400,40),
                "output/curved.png" : (130,120)}
 """
 
-STATIC_URLS = {"output/decaler.png" : (230,60)}
+STATIC_URLS = {"output/decaler.png" : (230,160),
+               "output/short.png" : (170,140),
+               "output/straight.png":(400,140)}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
@@ -152,7 +154,7 @@ class Simulation:
        
 dyn_env = DynamicEnvironnement()
 
-dyn_env.add_car(Voiture(position=(40,40),ia=True))
+dyn_env.add_car(Voiture(position=(40,140),ia=True))
 
 class DeepQAgent:
     #dans le TP, lr = 1e-4
@@ -202,7 +204,7 @@ class DeepQAgent:
             dyn_env = DynamicEnvironnement(
                 lambda cone,speed,car: ia.decide(cone,speed,car,self.policy_epsgreedy,self.policy_model,self.do_opti)
             )
-            dyn_env.add_car(Voiture(position=(80,40),ia=True, goal=GOAL))
+            dyn_env.add_car(Voiture(position=(80,140),ia=True, goal=GOAL))
             self.jeu.dyn_env = dyn_env
             self.t = 0
             while self.t < self.T and not is_terminal:
@@ -226,6 +228,7 @@ class DeepQAgent:
                         if mode=="test":
                             print("GOAL")
                         is_terminal = True
+                        rewards = 100
                         print("Final Reward: ",self.memory.rewards[self.memory.mem_index-1])
                 self.update_freq_delay+=1
                 if self.update_freq_delay >= self.target_update_freq:
