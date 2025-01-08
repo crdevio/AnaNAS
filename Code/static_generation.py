@@ -86,5 +86,6 @@ static_env.add(StraightRoad((135,25),LARGEUR_ROUTE,80,np.pi/2))
 static_env.add(StraightRoad((40,25),LARGEUR_ROUTE,80,np.pi/2))
 static_env.add(StraightRoad((25,120),LARGEUR_ROUTE,125,0))
 """
-static_env.add(StraightRoad((220,20),200,40,np.pi/2))
-generate_images(static_env,1000,500,file='output/straight.png')
+static_env.add(StraightRoad((120,20),80,40,np.pi/2))
+static_env.add(StraightRoad((200,40),80,40,np.pi/2))
+generate_images(static_env,1000,500,file='output/decaler.png')

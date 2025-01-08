@@ -24,6 +24,7 @@ BATCH_SIZE = 32
 SHOW_INFO_EVERY = 500
 WARMUP_PHASE = 2000  #20 000 dans le TP
 TEST_EVRY = 100
+GOAL_RADIUS = 200
 
 #mettre dedans les urls des fichiers et leur goal
 """
@@ -32,7 +33,7 @@ STATIC_URLS = {"output/straight.png":(400,40),
                "output/curved.png" : (130,120)}
 """
 
-STATIC_URLS = {"output/straight.png":(200,40)}
+STATIC_URLS = {"output/decaler.png" : (230,60)}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
@@ -145,7 +146,7 @@ class Simulation:
                         c= True
                         car.collision = True
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)
-        pygame.draw.circle(self.screen,"red",(GOAL[0]-self.camera.x,GOAL[1]-self.camera.y),2)
+        pygame.draw.circle(self.screen,"red",(GOAL[0]-self.camera.x,GOAL[1]-self.camera.y),6)
         pygame.display.flip()
 
        
@@ -221,7 +222,7 @@ class DeepQAgent:
                             print("CRASH")
                         is_terminal = True
                 for car in dyn_env.cars:
-                    if (car.x_position-GOAL[0])**2+(car.y_position-GOAL[1])**2<=20:
+                    if (car.x_position-GOAL[0])**2+(car.y_position-GOAL[1])**2<=GOAL_RADIUS:
                         if mode=="test":
                             print("GOAL")
                         is_terminal = True
