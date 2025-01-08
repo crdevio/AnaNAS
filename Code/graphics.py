@@ -32,7 +32,7 @@ STATIC_URLS = {"output/straight.png":(400,40),
                "output/curved.png" : (130,120)}
 """
 
-STATIC_URLS = {"output/straight.png":(120,40)}
+STATIC_URLS = {"output/straight.png":(200,40)}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
