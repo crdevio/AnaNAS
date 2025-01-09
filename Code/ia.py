@@ -9,7 +9,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using {DEVICE} device")
 
 EPS_START = 1.
-EPS_DECAY = 5e-3        #dans le TP 1e-5
+EPS_DECAY = 3e-3        #dans le TP 1e-5
 EPS_MIN = 0.1
 
 
@@ -29,7 +29,7 @@ class DQN(nn.Module):
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
         self.fc1 = nn.Linear(1 * (input_samples // 1), 16)
-        self.fc2 = nn.Linear(16 + 3, output_features)
+        self.fc2 = nn.Linear(16 + 4, output_features)
 
         # Move the model to the specified device
         self.to(DEVICE)
@@ -49,7 +49,7 @@ class DQN(nn.Module):
 
         # Ajout de la vitesse comme seconde entrée
         vitesse = vitesse.view(-1, 1).to(DEVICE)  # Move vitesse to the device and ensure correct shape
-        goal = goal.view(-1, 2).to(DEVICE)  # Move goal to the device and ensure correct shape
+        goal = goal.view(-1, 3).to(DEVICE)  # Move goal to the device and ensure correct shape
         x = torch.cat((x, vitesse, goal), dim=1).to(torch.float32)
 
         # Dernière couche linéaire
@@ -86,12 +86,6 @@ def decide(cone, speed, car, greedy, model, do_opti):
     )[0]
     return rep  # up down left right
 
-
-def reward(voiture, pos_avant):
-    print("attention je suis utilisée")
-    d_before = np.linalg.norm(voiture.goal - pos_avant)
-    d_after = np.linalg.norm(voiture.goal - np.array([voiture.x_position, voiture.y_position]))
-    return -(d_after - d_before)
 
 # model = DQN(3923,4)
 # greedy = EpsilonGreedy(model,EPS_START)

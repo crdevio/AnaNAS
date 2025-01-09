@@ -86,5 +86,5 @@ static_env.add(StraightRoad((135,25),LARGEUR_ROUTE,80,np.pi/2))
 static_env.add(StraightRoad((40,25),LARGEUR_ROUTE,80,np.pi/2))
 static_env.add(StraightRoad((25,120),LARGEUR_ROUTE,125,0))
 """
-static_env.add(CurvedRoad((50,260),100,50,3*np.pi/2,2*np.pi))
-generate_images(static_env,1000,500,file='output/curved.png')
+static_env.add(StraightRoad((150,140),100,220,np.pi/2))
+generate_images(static_env,1000,500,file='output/squared.png')

@@ -15,7 +15,7 @@ class Memory:
         #On verra plus tard mais peut-être que c'est encore mieux de faire des torch.tensor
         self.cone = torch.zeros((MEM_SIZE, 101, 51, 3), dtype=torch.float32)
         self.vitesse = torch.zeros((MEM_SIZE,), dtype=torch.float32)
-        self.goal = torch.zeros((MEM_SIZE,2), dtype=torch.float32)
+        self.goal = torch.zeros((MEM_SIZE,3), dtype=torch.float32)
         self.actions = torch.zeros((MEM_SIZE,), dtype=torch.int32)
         self.rewards = torch.zeros((MEM_SIZE,), dtype=torch.float32)
         self.terminals = np.zeros((MEM_SIZE,), dtype=bool)
@@ -31,7 +31,7 @@ class Memory:
         #self.theta.append(theta)
         self.cone[self.mem_index] = torch.from_numpy(cone)
         self.vitesse[self.mem_index] = vitesse
-        self.goal[self.mem_index] = torch.tensor([goal[0], goal[1]])
+        self.goal[self.mem_index] = torch.tensor([goal[0], goal[1],goal[2]])
         self.actions[self.mem_index] = action
         self.rewards[self.mem_index] = reward
         self.terminals[self.mem_index] = terminal

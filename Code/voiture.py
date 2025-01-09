@@ -18,6 +18,21 @@ RAYON_CONE = 64
 ANGLE_CONE = 2*pi / 3
 LARGEUR_CONE = 32
 
+def scale_distance(d, threshold=200, alpha=0.05):
+    """
+    Scales the distance between 0 and 1, starting to change meaningfully
+    as the distance approaches the goal (lower distances).
+    
+    Args:
+        d (float): The distance to be scaled.
+        threshold (float): The distance at which the scaling starts to change.
+        alpha (float): Controls how sharply the scaling changes near the threshold.
+        
+    Returns:
+        float: A scaled value between 0 and 1.
+    """
+    return 1 - 1 / (1 + np.exp(alpha * (d - threshold)))
+
 
 class Voiture(Dynamic):
     def __init__(self, position = (0,0), ia = True, goal = (200,200), orientation = 0):
@@ -78,14 +93,17 @@ class Voiture(Dynamic):
         return ["rect", "blue", (self.x_position, self.y_position, LARGEUR, LONGUEUR),self.orientation]
     
     def get_relative_goal_position(self):
-        dx = self.goal[0] - self.x_position
-        dy = self.goal[1] - self.y_position
+        goal_vector_unnorm = np.array([self.goal[0],self.goal[1]]) - np.array([self.x_position,self.y_position])
+        # Normalize goal vector
+        goal_vector = goal_vector_unnorm/np.linalg.norm(goal_vector_unnorm)
 
-        # Rotation inverse pour obtenir les coordonnées relatives
-        x_rel = np.cos(-self.orientation) * dx - np.sin(-self.orientation) * dy
-        y_rel = np.sin(-self.orientation) * dx + np.cos(-self.orientation) * dy
+        # Car's forward vector
+        car_forward = np.array([np.cos(self.orientation), np.sin(self.orientation)])
 
-        return x_rel, y_rel
+        # Calculate angle using cross product
+        angle = np.arctan2(goal_vector[1], goal_vector[0]) - np.arctan2(car_forward[1], car_forward[0])
+
+        return np.sin(angle), np.cos(angle),scale_distance(np.linalg.norm(goal_vector_unnorm),200,0.05)
 
     def get_cone(self):
 
