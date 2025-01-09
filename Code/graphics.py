@@ -28,20 +28,21 @@ GOAL_RADIUS = 200
 
 #mettre dedans les urls des fichiers et leur goal
 """
-STATIC_URLS = {"output/straight.png":(400,40),
-               "output/short.png" : (150,40),
-               "output/curved.png" : (130,120)}
-"""
-
 STATIC_URLS = {"output/decaler.png" : (230,160),
                "output/short.png" : (170,140),
                "output/straight.png":(400,140)}
+"""
+
+STATIC_URLS = {"output/curved.png" : [(170,220),[(80,140,0),(130,160,np.pi/4)]]}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
 
 pygame.init()
 font = pygame.font.Font(None, 36)
+
+def choose_rd_from_list(l):
+    return l[random.randint(0,len(l)-1)]
 
 class Simulation:
 
@@ -198,13 +199,14 @@ class DeepQAgent:
             print("TEST situation number",self.iter%TEST_EVRY)
 
         self.jeu = Simulation(static_url=static_url,dyn_env = None)
-        GOAL = STATIC_URLS[static_url]
+        GOAL = STATIC_URLS[static_url][0]
         is_terminal = False
         for _ in range(self.game_per_epoch):
             dyn_env = DynamicEnvironnement(
                 lambda cone,speed,car: ia.decide(cone,speed,car,self.policy_epsgreedy,self.policy_model,self.do_opti)
             )
-            dyn_env.add_car(Voiture(position=(80,140),ia=True, goal=GOAL))
+            starting_pos = choose_rd_from_list(STATIC_URLS[static_url][1])
+            dyn_env.add_car(Voiture(position=starting_pos[:2],ia=True, goal=GOAL, orientation=starting_pos[2]))
             self.jeu.dyn_env = dyn_env
             self.t = 0
             while self.t < self.T and not is_terminal:

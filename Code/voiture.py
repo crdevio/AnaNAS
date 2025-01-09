@@ -20,11 +20,11 @@ LARGEUR_CONE = 32
 
 
 class Voiture(Dynamic):
-    def __init__(self, position = (0,0), ia = True, goal = (200,200)):
+    def __init__(self, position = (0,0), ia = True, goal = (200,200), orientation = 0):
 
         self.x_position = position[0]
         self.y_position = position[1]
-        self.orientation = 0 #C'est en radient, son vecteur d'orientation sera donc (cos(orientation), sin(orientation))
+        self.orientation = orientation #C'est en radient, son vecteur d'orientation sera donc (cos(orientation), sin(orientation))
         self.vitesse = 0
         self.ia = ia
         self.collision = False
