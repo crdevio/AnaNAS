@@ -9,27 +9,28 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using {DEVICE} device")
 
 EPS_START = 1.
-EPS_DECAY = 3e-3        #dans le TP 1e-5
+EPS_DECAY = 5e-3        #dans le TP 1e-5
 EPS_MIN = 0.1
 
 
 def state_reward(car):
     # ATTENTION y a peut-être une couille entre l'appel à state_reward et la valeur de collision.
-    score = 1000 / (np.linalg.norm(np.array([car.x_position, car.y_position]) - np.array(car.goal)) + 0.05)
+    score = 20*np.exp(-np.linalg.norm(np.array([car.x_position, car.y_position]) - np.array(car.goal))/100.)
     if car.collision:
         score = - 100
     return score
 
 
 class DQN(nn.Module):
-    def __init__(self, input_samples, output_features):
+    def __init__(self, input_samples, output_features,alpha):
         super(DQN, self).__init__()
+        self.alpha = alpha
         self.memory = Memory()
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=4, kernel_size=3, stride=1, padding=1)  # Output: (4, 64, 32)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
-        self.fc1 = nn.Linear(1 * (input_samples // 1), 16)
-        self.fc2 = nn.Linear(16 + 4, output_features)
+        self.fc1 = nn.Linear(1 * (input_samples // 1)+4, 16)
+        self.fc2 = nn.Linear(16, output_features)
 
         # Move the model to the specified device
         self.to(DEVICE)
@@ -45,16 +46,18 @@ class DQN(nn.Module):
         # Mise en forme pour les couches linéaires
         x = x.view(x.size(0), -1)
         x = F.relu(x)
+        vitesse = vitesse.view(-1, 1).to(DEVICE)  # Move vitesse to the device and ensure correct shape
+        goal = goal.view(-1, 3).to(DEVICE)  # Move goal to the device and ensure correct shape
+        x = torch.cat((x,vitesse, goal), dim=1).to(torch.float32)
         x = F.relu(self.fc1(x))
 
         # Ajout de la vitesse comme seconde entrée
-        vitesse = vitesse.view(-1, 1).to(DEVICE)  # Move vitesse to the device and ensure correct shape
-        goal = goal.view(-1, 3).to(DEVICE)  # Move goal to the device and ensure correct shape
-        x = torch.cat((x, vitesse, goal), dim=1).to(torch.float32)
 
         # Dernière couche linéaire
         x = self.fc2(x)
 
+
+        #return (1-self.alpha)*x+self.alpha*other_x
         return x
 
 
@@ -75,9 +78,9 @@ def decide(cone, speed, car, greedy, model, do_opti):
     cone = torch.tensor(np.array(cone), dtype=torch.float32, device=DEVICE)  # Create tensor on the device
     cone = cone.view(1, cone.shape[0], cone.shape[1], cone.shape[2])
     if do_opti:
-        rep = greedy((cone, torch.tensor(car.vitesse, device=DEVICE), torch.tensor(car.get_relative_goal_position(), device=DEVICE)))  # Move tensors to device
+        rep = greedy((cone, torch.tensor(car.vitesse/100., device=DEVICE), torch.tensor(car.get_relative_goal_position(), device=DEVICE)))  # Move tensors to device
     else:
-        rep = model(cone, torch.tensor(car.vitesse, device=DEVICE), torch.tensor(car.get_relative_goal_position(), device=DEVICE))  # Move tensors to device
+        rep = model(cone, torch.tensor(car.vitesse/100., device=DEVICE), torch.tensor(car.get_relative_goal_position(), device=DEVICE))  # Move tensors to device
     j = torch.argmax(rep, dim=1)
     rep = torch.tensor(
         [

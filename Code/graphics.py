@@ -25,6 +25,7 @@ SHOW_INFO_EVERY = 500
 WARMUP_PHASE = 2000  #20 000 dans le TP
 TEST_EVRY = 100
 GOAL_RADIUS = 200
+ALPHA = 1.
 
 #mettre dedans les urls des fichiers et leur goal
 """
@@ -34,8 +35,8 @@ STATIC_URLS = {"output/decaler.png" : (230,160),
                "output/curved.png" : [(170,220),[(80,140,0),(130,160,np.pi/4)]]}
 """
 
-STATIC_URLS = {"output/squared.png": [(220,220),[(80,250,0)]],
-               "output/squared2.png": [(220,280),[(80,250,0)]]}
+STATIC_URLS = {"output/squared.png": [(220,220),[(80,250,0),(140,250,-np.pi/24)]],
+               "output/squared2.png": [(220,280),[(80,250,0),(140,250,np.pi/24)]]}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
@@ -169,8 +170,8 @@ class DeepQAgent:
         self.game_per_epoch = game_per_epoch
         self.iter = 0
         self.T = T
-        self.policy_model = DQN(INPUT_SAMPLE,4).to(DEVICE)
-        self.target_model = DQN(INPUT_SAMPLE,4).to(DEVICE)
+        self.policy_model = DQN(INPUT_SAMPLE,4,ALPHA).to(DEVICE)
+        self.target_model = DQN(INPUT_SAMPLE,4,ALPHA).to(DEVICE)
         eps_start = EPS_START
         if eps!=None:
             eps_start = eps
