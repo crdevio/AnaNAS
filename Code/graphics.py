@@ -36,7 +36,7 @@ STATIC_URLS = {"output/decaler.png" : [(230,160),[(80,140,0)]],
                "output/squared2.png": [(220,280),[(80,250,0)]]}
 """
 
-STATIC_URLS = {"output/squared.png": [(220,220),[(80,250,0)]],}
+STATIC_URLS = {"output/curved.png" : [(170,220),[(80,140,0)]]}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
@@ -64,6 +64,11 @@ class Simulation:
             for i in range(-2,3):
                 for j in range(-2,3):
                     self.static_arr[GOAL[0]+i][GOAL[1]+j] = np.array([255,0,0])
+            """
+            self.static_arr[(self.static_arr == [0, 0, 0]).all(axis=-1)] = [1, 0, 0]
+            self.static_arr[(self.static_arr == [255, 255, 255]).all(axis=-1)] = [0, 1, 0]
+            self.static_arr[(self.static_arr == [255, 0, 0]).all(axis=-1)] = [0, 0, 1]
+            """
         self.drawing = drawing
         if False:
             self.time_manager = lambda: self.clock.get_time()/1000.0 # in sec
@@ -148,10 +153,7 @@ class Simulation:
                     x,y = int(e[0]),int(e[1])
                     x+=int(self.camera.x)
                     y += int(self.camera.y)
-                    somm = 0
-                    try: somm = sum(self.static_arr[x][y])
-                    except:pass
-                    if somm== 0:
+                    if (self.static_arr[x][y] == [0,0,0]).all():
                         c= True
                         car.collision = True
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)

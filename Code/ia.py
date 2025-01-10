@@ -15,7 +15,10 @@ EPS_MIN = 0.1
 
 def state_reward(car):
     # ATTENTION y a peut-être une couille entre l'appel à state_reward et la valeur de collision.
-    score = 1000 / (np.linalg.norm(np.array([car.x_position, car.y_position]) - np.array(car.goal)) + 0.05)
+    score = 40*np.exp(-np.linalg.norm(np.array([car.x_position, car.y_position]) - np.array(car.goal))/100.)
+    vector_to_goal = np.array([car.x_position, car.y_position]) - np.array(car.goal)
+    theta_g = np.atan2(vector_to_goal[1],vector_to_goal[0])
+    score -= 4*np.abs(theta_g)
     if car.collision:
         score = - 100
     return score
