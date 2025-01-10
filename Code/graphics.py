@@ -31,10 +31,12 @@ GOAL_RADIUS = 200
 STATIC_URLS = {"output/decaler.png" : [(230,160),[(80,140,0)]],
                "output/short.png" : (170,140),
                "output/straight.png":(400,140),
-               "output/curved.png" : [(170,220),[(80,140,0),(130,160,np.pi/4)]]}
+               "output/curved.png" : [(170,220),[(80,140,0),(130,160,np.pi/4)]],
+               "output/squared.png": [(220,220),[(80,250,0)]],
+               "output/squared2.png": [(220,280),[(80,250,0)]]}
 """
 
-STATIC_URLS = {"output/curved.png" : [(170,220),[(80,140,0),(130,160,np.pi/4)]]}
+STATIC_URLS = {"output/squared.png": [(220,220),[(80,250,0)]],}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
@@ -59,6 +61,9 @@ class Simulation:
         else:
             self.static_img = pygame.image.load(static_url).convert()
             self.static_arr = pygame.surfarray.array3d(self.static_img)
+            for i in range(-2,3):
+                for j in range(-2,3):
+                    self.static_arr[GOAL[0]+i][GOAL[1]+j] = np.array([255,0,0])
         self.drawing = drawing
         if False:
             self.time_manager = lambda: self.clock.get_time()/1000.0 # in sec
@@ -90,7 +95,7 @@ class Simulation:
             if keys[pygame.K_DOWN]:
                 self.camera.move_down(CAMERA_SPEED * dt)
         self.dyn_env.update_env(dt,keys)
-        image_array = pygame.surfarray.array3d(pygame.display.get_surface())
+        #image_array = pygame.surfarray.array3d(pygame.display.get_surface())
         return self.dyn_env.decisions(self.static_arr,mem,t)
     def draw(self):
         if not self.drawing: return
@@ -199,8 +204,8 @@ class DeepQAgent:
             self.policy_epsgreedy.eps = 0
             print("TEST situation number",self.iter%TEST_EVRY)
 
-        self.jeu = Simulation(static_url=static_url,dyn_env = None)
         GOAL = STATIC_URLS[static_url][0]
+        self.jeu = Simulation(static_url=static_url,dyn_env = None)
         is_terminal = False
         for _ in range(self.game_per_epoch):
             dyn_env = DynamicEnvironnement(

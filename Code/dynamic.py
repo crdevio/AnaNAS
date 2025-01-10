@@ -44,9 +44,6 @@ class DynamicEnvironnement:
     
     def decisions(self,img,mem,t):
         img_np = np.array(img)
-        to_compare = np.zeros((101, 51, 1, 2))
-        to_compare[:, :, :, 0] = img_np.shape[0] - 1
-        to_compare[:, :, :, 1] = img_np.shape[1] - 1
         """
         Appelé QUE SI ia est activé
         """

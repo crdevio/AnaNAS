@@ -29,7 +29,8 @@ class DQN(nn.Module):
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
         self.fc1 = nn.Linear(1 * (input_samples // 1), 16)
-        self.fc2 = nn.Linear(16 + 3, output_features)
+        self.fc2 = nn.Linear(16 + 3, 16)
+        self.fc3 = nn.Linear(16,output_features)
 
         # Move the model to the specified device
         self.to(DEVICE)
@@ -53,7 +54,8 @@ class DQN(nn.Module):
         x = torch.cat((x, vitesse, goal), dim=1).to(torch.float32)
 
         # Dernière couche linéaire
-        x = self.fc2(x)
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
 
         return x
 
