@@ -37,10 +37,12 @@ STATIC_URLS = {"output/decaler.png" : [(230,160),[(80,140,0)]],
 """
 
 STATIC_URLS = {"output/decaler.png" : [(230,160),[(80,140,0),(150,160,0)]],
-               "output/straight.png":[(400,140),[(80,140,0),(150,140,0),(210,140,0)]]}
+               "output/straight.png":[(400,140),[(80,140,0),(150,140,0),(210,140,0)]],
+               "output/curved.png" : [(170,220),[(80,140,0),(130,160,np.pi/4)]]}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
+epsilon_dict = {key: 1. for key in STATIC_URLS_LIST}
 
 pygame.init()
 font = pygame.font.Font(None, 36)
@@ -176,6 +178,7 @@ class DeepQAgent:
         self.game_per_epoch = game_per_epoch
         self.iter = 0
         self.T = T
+        self.eps_decay = 0.
         self.policy_model = DQN(INPUT_SAMPLE,4).to(DEVICE)
         self.target_model = DQN(INPUT_SAMPLE,4).to(DEVICE)
         eps_start = EPS_START
@@ -190,6 +193,7 @@ class DeepQAgent:
 
         self.jeu = None
         self.global_t = 0
+        self.static_url = ""
         self.gamma = gamma
         self.criterion = nn.HuberLoss()
         self.do_opti = do_opti
@@ -201,6 +205,8 @@ class DeepQAgent:
         mode = "train"
 
         static_url = STATIC_URLS_LIST[random.randint(0,len(STATIC_URLS_LIST)-1)]
+        self.static_url = static_url
+        self.policy_epsgreedy.eps = epsilon_dict[self.static_url]
         if self.iter%TEST_EVRY <= len(STATIC_URLS_LIST)-1 and self.global_t>=WARMUP_PHASE:
             mode = "test"
             static_url = STATIC_URLS_LIST[self.iter%TEST_EVRY]
@@ -225,22 +231,23 @@ class DeepQAgent:
                 if self.t == (self.T):
                     is_terminal = True
                     print("Final Reward: ",self.memory.rewards[self.memory.mem_index-1])
+                    self.eps_decay = EPS_DECAY
                 self.jeu.draw()
                 rewards = ia.state_reward(dyn_env.cars[0])
                 if self.global_t>=WARMUP_PHASE and self.do_opti and self.global_t%MODEL_UPDATE_EVERY==0:
                     self.optimize_model()
                 for car in dyn_env.cars:
                     if car.collision:
-                        if mode=="test":
-                            print("CRASH")
+                        print("CRASH")
                         is_terminal = True
+                        self.eps_decay = EPS_DECAY
                 for car in dyn_env.cars:
                     if (car.x_position-GOAL[0])**2+(car.y_position-GOAL[1])**2<=GOAL_RADIUS:
-                        if mode=="test":
-                            print("GOAL")
+                        print("GOAL")
                         is_terminal = True
                         rewards = 100
                         print("Final Reward: ",self.memory.rewards[self.memory.mem_index-1])
+                        self.eps_decay = 5*EPS_DECAY
                 self.update_freq_delay+=1
                 if self.update_freq_delay >= self.target_update_freq:
                     self.target_model.load_state_dict(self.policy_model.state_dict())
@@ -265,14 +272,11 @@ class DeepQAgent:
         
     def loop(self, nb_epoch):
 
-        eps = self.policy_epsgreedy.eps
-
         for _ in range(nb_epoch):
             self.iter+=1
             #self.memoire = Memory()
             self.etape1()
-            if self.global_t>=WARMUP_PHASE:eps=max(eps-EPS_DECAY, EPS_MIN)
-            self.policy_epsgreedy.eps = eps
+            if self.global_t>=WARMUP_PHASE:epsilon_dict[self.static_url]=max(epsilon_dict[self.static_url]-self.eps_decay, EPS_MIN)
             if self.iter % SAVE_EVERY==0:
                 torch.save(self.policy_model.state_dict(), "./weights")
                 print("saved")
