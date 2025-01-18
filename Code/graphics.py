@@ -30,15 +30,14 @@ GOAL_RADIUS = 200
 """
 STATIC_URLS = {"output/decaler.png" : [(230,160),[(80,140,0)]],
                "output/short.png" : (170,140),
-               "output/straight.png":(400,140),
+               "output/straight.png":[(400,140),[(80,140,0),(150,140,0),(210,140,0)]]
                "output/curved.png" : [(170,220),[(80,140,0),(130,160,np.pi/4)]],
                "output/squared.png": [(220,220),[(80,250,0)]],
                "output/squared2.png": [(220,280),[(80,250,0)]]}
 """
 
-STATIC_URLS = {"output/decaler.png" : [(230,160),[(80,140,0),(150,160,0)]],
-               "output/straight.png":[(400,140),[(80,140,0),(150,140,0),(210,140,0)]],
-               "output/curved.png" : [(170,220),[(80,140,0),(130,160,np.pi/4)]]}
+STATIC_URLS = {
+               "output/curved.png" : [(170,220),[(80,140,0)]],}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 

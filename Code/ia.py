@@ -24,10 +24,14 @@ def state_reward(car):
     return score
 
 
+
 class DQN(nn.Module):
     def __init__(self, input_samples, output_features):
         super(DQN, self).__init__()
         self.memory = Memory()
+
+        #self.time_emb_layer = nn.Linear(1,1)
+
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=4, kernel_size=3, stride=1, padding=1)  # Output: (4, 64, 32)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
@@ -39,8 +43,17 @@ class DQN(nn.Module):
         self.to(DEVICE)
 
     def forward(self, x, vitesse, goal):
+        vitesse = vitesse.view(-1, 1).to(DEVICE)  # Move vitesse to the device and ensure correct shape
+        goal = goal.view(-1, 2).to(DEVICE)  # Move goal to the device and ensure correct shape
+        #time_emb = self.get_time_embedding(torch.arctan(goal[:,1]/goal[:,0]))
+        
+        # Add time embedding as extra channels to the image
+        #time_emb = time_emb.unsqueeze(-1).unsqueeze(-1).unsqueeze(-1)  # Make it (batch_size, 2, 1, 1)
+        #time_emb = self.time_emb_layer(time_emb)
+        
         # Passage des données convolutives
         x = x.transpose(1, 3).to(DEVICE)  # Move x to the device
+        #x+=time_emb
         x = self.conv1(x)
         x = self.pool(x)
         # x = F.relu(self.conv2(x))
@@ -52,8 +65,6 @@ class DQN(nn.Module):
         x = F.relu(self.fc1(x))
 
         # Ajout de la vitesse comme seconde entrée
-        vitesse = vitesse.view(-1, 1).to(DEVICE)  # Move vitesse to the device and ensure correct shape
-        goal = goal.view(-1, 2).to(DEVICE)  # Move goal to the device and ensure correct shape
         x = torch.cat((x, vitesse, goal), dim=1).to(torch.float32)
 
         # Dernière couche linéaire
@@ -61,6 +72,12 @@ class DQN(nn.Module):
         x = self.fc3(x)
 
         return x
+    
+    def get_time_embedding(self, time_step):
+        # Convert time_step to tensor and get the time embedding
+        embedding = torch.sin(time_step)
+
+        return embedding
 
 
 class EpsilonGreedy:
@@ -80,7 +97,7 @@ def decide(cone, speed, car, greedy, model, do_opti):
     cone = torch.tensor(np.array(cone), dtype=torch.float32, device=DEVICE)  # Create tensor on the device
     cone = cone.view(1, cone.shape[0], cone.shape[1], cone.shape[2])
     if do_opti:
-        rep = greedy((cone, torch.tensor(car.vitesse, device=DEVICE), torch.tensor(car.get_relative_goal_position(), device=DEVICE)))  # Move tensors to device
+        rep = greedy((cone, torch.tensor(car.vitesse, device=DEVICE), torch.tensor(car.get_relative_goal_position(), device=DEVICE,dtype=torch.float32)))  # Move tensors to device
     else:
         rep = model(cone, torch.tensor(car.vitesse, device=DEVICE), torch.tensor(car.get_relative_goal_position(), device=DEVICE))  # Move tensors to device
     j = torch.argmax(rep, dim=1)
