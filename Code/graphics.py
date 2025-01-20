@@ -266,7 +266,8 @@ class DeepQAgent:
         loss = self.criterion(y,rewards_predicted)
         loss.backward()
 
-        if self.global_t%SHOW_INFO_EVERY==0:print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.policy_epsgreedy.eps}")
+        if self.global_t%SHOW_INFO_EVERY==0:
+            print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.policy_epsgreedy.eps}")
         self.policy_optimizer.step()
         
     def loop(self, nb_epoch):
@@ -275,8 +276,9 @@ class DeepQAgent:
             self.iter+=1
             #self.memoire = Memory()
             self.etape1()
-            if self.global_t>=WARMUP_PHASE:epsilon_dict[self.static_url]=max(epsilon_dict[self.static_url]-self.eps_decay, EPS_MIN)
-            if self.iter % SAVE_EVERY==0:
+            if self.global_t>=WARMUP_PHASE:
+                epsilon_dict[self.static_url]=max(epsilon_dict[self.static_url]-self.eps_decay, EPS_MIN)
+            if self.iter % SAVE_EVERY == 0:
                 torch.save(self.policy_model.state_dict(), "./weights")
                 print("saved")
         pass
