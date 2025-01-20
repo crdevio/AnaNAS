@@ -20,13 +20,6 @@ class Memory:
         self.rewards = torch.zeros((MEM_SIZE,), dtype=torch.float32)
         self.terminals = np.zeros((MEM_SIZE,), dtype=bool)
 
-        '''
-        self.states = deque([], maxlen = MEM_SIZE)
-        self.actions = deque([], maxlen = MEM_SIZE)
-        self.rewards = deque([], maxlen = MEM_SIZE)
-        self.terminals = deque([], maxlen = MEM_SIZE)
-        '''
-
     def append(self,cone,vitesse,goal,action,reward,terminal):
         #self.theta.append(theta)
         self.cone[self.mem_index] = torch.from_numpy(cone)
@@ -39,12 +32,6 @@ class Memory:
         self.mem_index = (self.mem_index + 1) % MEM_SIZE
         self.size = min(self.size + 1, MEM_SIZE)
 
-        '''
-        self.states.append(state)
-        self.actions.append(action)
-        self.rewards.append(reward)
-        self.terminals.append(terminal)
-        '''
 
     def get(self,i):
         #self.theta[i],self.states[i],self.states_before[i],self.actions[i],self.rewards[i]
