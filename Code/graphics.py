@@ -206,34 +206,34 @@ class DeepQAgent:
         static_url = STATIC_URLS_LIST[random.randint(0,len(STATIC_URLS_LIST)-1)]
         self.static_url = static_url
         self.policy_epsgreedy.eps = epsilon_dict[self.static_url]
-        if self.iter%TEST_EVRY <= len(STATIC_URLS_LIST)-1 and self.global_t>=WARMUP_PHASE:
+        if self.iter % TEST_EVRY <= len(STATIC_URLS_LIST) - 1 and self.global_t >= WARMUP_PHASE:
             mode = "test"
-            static_url = STATIC_URLS_LIST[self.iter%TEST_EVRY]
+            static_url = STATIC_URLS_LIST[self.iter % TEST_EVRY]
             self.policy_epsgreedy.eps = 0
-            print("TEST situation number",self.iter%TEST_EVRY)
+            print("TEST situation number", self.iter % TEST_EVRY)
 
         GOAL = STATIC_URLS[static_url][0]
-        self.jeu = Simulation(static_url=static_url,dyn_env = None)
+        self.jeu = Simulation(static_url=static_url, dyn_env=None)
         is_terminal = False
         for _ in range(self.game_per_epoch):
             dyn_env = DynamicEnvironnement(
                 lambda cone,speed,car: ia.decide(cone,speed,car,self.policy_epsgreedy,self.policy_model,self.do_opti)
             )
             starting_pos = choose_rd_from_list(STATIC_URLS[static_url][1])
-            dyn_env.add_car(Voiture(position=starting_pos[:2],ia=True, goal=GOAL, orientation=starting_pos[2]))
+            dyn_env.add_car(Voiture(position=starting_pos[:2], ia=True, goal=GOAL, orientation=starting_pos[2]))
             self.jeu.dyn_env = dyn_env
             self.t = 0
             while self.t < self.T and not is_terminal:
                 self.t += 1
-                self.global_t+=1
-                cone, vitesse, goal, actions= self.jeu.update(self.memory,self.t,self)
+                self.global_t += 1
+                cone, vitesse, goal, actions= self.jeu.update(self.memory, self.t, self)
                 if self.t == (self.T):
                     is_terminal = True
-                    print("Final Reward: ",self.memory.rewards[self.memory.mem_index-1])
+                    print("Final Reward: ", self.memory.rewards[self.memory.mem_index-1])
                     self.eps_decay = EPS_DECAY
                 self.jeu.draw()
                 rewards = ia.state_reward(dyn_env.cars[0])
-                if self.global_t>=WARMUP_PHASE and self.do_opti and self.global_t%MODEL_UPDATE_EVERY==0:
+                if self.global_t >= WARMUP_PHASE and self.do_opti and self.global_t % MODEL_UPDATE_EVERY == 0:
                     self.optimize_model()
                 for car in dyn_env.cars:
                     if car.collision:
@@ -241,16 +241,16 @@ class DeepQAgent:
                         is_terminal = True
                         self.eps_decay = EPS_DECAY
                 for car in dyn_env.cars:
-                    if (car.x_position-GOAL[0])**2+(car.y_position-GOAL[1])**2<=GOAL_RADIUS:
+                    if (car.x_position-GOAL[0])**2 + (car.y_position-GOAL[1])**2 <= GOAL_RADIUS:
                         print("GOAL")
                         is_terminal = True
                         rewards = 100
-                        print("Final Reward: ",self.memory.rewards[self.memory.mem_index-1])
+                        print("Final Reward: ", self.memory.rewards[self.memory.mem_index-1])
                         self.eps_decay = 5*EPS_DECAY
-                self.update_freq_delay+=1
+                self.update_freq_delay += 1
                 if self.update_freq_delay >= self.target_update_freq:
                     self.target_model.load_state_dict(self.policy_model.state_dict())
-                    self.update_freq_delay=0
+                    self.update_freq_delay = 0
                 self.memory.append(cone, vitesse, goal, actions, rewards, is_terminal)
 
     def optimize_model(self):
@@ -266,18 +266,18 @@ class DeepQAgent:
         loss = self.criterion(y,rewards_predicted)
         loss.backward()
 
-        if self.global_t%SHOW_INFO_EVERY==0:
+        if self.global_t % SHOW_INFO_EVERY == 0:
             print(f"Loop {self.iter}: {loss.item()}, epsilon : {self.policy_epsgreedy.eps}")
         self.policy_optimizer.step()
         
     def loop(self, nb_epoch):
 
         for _ in range(nb_epoch):
-            self.iter+=1
+            self.iter += 1
             #self.memoire = Memory()
             self.etape1()
-            if self.global_t>=WARMUP_PHASE:
-                epsilon_dict[self.static_url]=max(epsilon_dict[self.static_url]-self.eps_decay, EPS_MIN)
+            if self.global_t >= WARMUP_PHASE:
+                epsilon_dict[self.static_url] = max(epsilon_dict[self.static_url]-self.eps_decay, EPS_MIN)
             if self.iter % SAVE_EVERY == 0:
                 torch.save(self.policy_model.state_dict(), "./weights")
                 print("saved")
