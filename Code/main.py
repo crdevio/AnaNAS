@@ -1,6 +1,6 @@
-from graphics import DeepQAgent,NB_EPOCH
+from ia.deepq_agent import DeepQAgent
 import argparse
-
+from ia.constants import NB_EPOCH
 parser = argparse.ArgumentParser(
                     prog='ProgramName',
                     description='What the program does',

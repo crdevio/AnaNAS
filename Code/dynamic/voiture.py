@@ -1,7 +1,7 @@
 #Pour tester la voiture, lancer test_voiture.py
 
 import pygame
-from dynamic import *
+from .dynamic import Dynamic
 from math import cos, sin, pi, atan
 import numpy as np
 
@@ -88,28 +88,7 @@ class Voiture(Dynamic):
         return x_rel, y_rel
 
     def get_cone(self):
-
-        '''
-        
-        cone_actuel = []
-
-        for i in range(RAYON_CONE):
-            cone_actuel.append([])
-            for j in range(LARGEUR_CONE):
-
-                x, y = self.x_position,self.y_position
-
-                x += cos(self.orientation-ANGLE_CONE/2+j/LARGEUR_CONE*ANGLE_CONE)*i
-                y += sin(self.orientation-ANGLE_CONE/2+j/LARGEUR_CONE*ANGLE_CONE)*i
-
-                cone_actuel[-1].append([int(x),int(y)])
-
-        return cone_actuel
-
-        '''
-
         #Il faut calculer le centre de la voiture, faire la rotation et ajouter le centre
-
         x_avant_gauche = self.x_position + LONGUEUR * cos(self.orientation)
         y_avant_gauche = self.y_position + LONGUEUR * sin(self.orientation)
 
