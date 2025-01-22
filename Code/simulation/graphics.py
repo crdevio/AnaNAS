@@ -39,15 +39,13 @@ epsilon_dict = {key: 1. for key in STATIC_URLS_LIST}
 pygame.init()
 font = pygame.font.Font(None, 36)
 
-def choose_rd_from_list(l):
-    return l[random.randint(0,len(l)-1)]
-
 class Simulation:
 
     def __init__(self, dyn_env=DynamicEnvironnement(),res = RES_AFFICHAGE, drawing = True, dt = 0.017):
         static_url = STATIC_URLS_LIST[random.randint(0,len(STATIC_URLS_LIST)-1)]
         self.static_url = static_url
         self.GOAL = STATIC_URLS[static_url][0]
+        print(f'Voici notre goal {self.GOAL}')
         pygame.init()
         font = pygame.font.Font(None, 36)
         self.running = True
@@ -59,9 +57,11 @@ class Simulation:
         else:
             self.static_img = pygame.image.load(static_url).convert()
             self.static_arr = pygame.surfarray.array3d(self.static_img)
+            print('Coucou on va commcencer à dessiner le goal')
             for i in range(-2,3):
                 for j in range(-2,3):
-                    self.static_arr[GOAL[0]+i][GOAL[1]+j] = np.array([255,0,0])
+                    print(f'On dessine le goal sur {self.GOAL[0] + i}, {self.GOAL[1] + j}')
+                    self.static_arr[self.GOAL[0]+i][self.GOAL[1]+j] = np.array([255,0,0])
             """
             self.static_arr[(self.static_arr == [0, 0, 0]).all(axis=-1)] = [1, 0, 0]
             self.static_arr[(self.static_arr == [255, 255, 255]).all(axis=-1)] = [0, 1, 0]
@@ -101,7 +101,8 @@ class Simulation:
         #image_array = pygame.surfarray.array3d(pygame.display.get_surface())
         return self.dyn_env.decisions(self.static_arr,mem,t)
     def draw(self):
-        if not self.drawing: return
+        if not self.drawing: 
+            return
         if self.static_img == None:
             print("Nathan t'as pas set static_img")
             print("Clement cette phrase ne veut rien dire")
@@ -155,10 +156,12 @@ class Simulation:
                         c= True
                         car.collision = True
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)
-        pygame.draw.circle(self.screen,"red",(GOAL[0]-self.camera.x,GOAL[1]-self.camera.y),6)
+        pygame.draw.circle(self.screen, "red", (self.GOAL[0] - self.camera.x, self.GOAL[1] - self.camera.y), 6)
         pygame.display.flip()
 
-       
-#dyn_env = DynamicEnvironnement()
+'''
+On dirait que ces lignes servent à rien mais pour l'instant je les laisse le temps de vérifier       
+dyn_env = DynamicEnvironnement()
 
-#dyn_env.add_car(Voiture(position=(40,140),ia=True))
+dyn_env.add_car(Voiture(position=(40,140),ia=True))
+'''

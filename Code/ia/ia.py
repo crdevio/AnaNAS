@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from ia.constants import DEVICE
+from ia.constants import *
 
 
 def state_reward(car):
