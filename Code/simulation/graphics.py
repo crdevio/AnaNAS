@@ -45,7 +45,6 @@ class Simulation:
         static_url = STATIC_URLS_LIST[random.randint(0,len(STATIC_URLS_LIST)-1)]
         self.static_url = static_url
         self.GOAL = STATIC_URLS[static_url][0]
-        print(f'Voici notre goal {self.GOAL}')
         pygame.init()
         font = pygame.font.Font(None, 36)
         self.running = True
@@ -57,10 +56,8 @@ class Simulation:
         else:
             self.static_img = pygame.image.load(static_url).convert()
             self.static_arr = pygame.surfarray.array3d(self.static_img)
-            print('Coucou on va commcencer à dessiner le goal')
             for i in range(-2,3):
                 for j in range(-2,3):
-                    print(f'On dessine le goal sur {self.GOAL[0] + i}, {self.GOAL[1] + j}')
                     self.static_arr[self.GOAL[0]+i][self.GOAL[1]+j] = np.array([255,0,0])
             """
             self.static_arr[(self.static_arr == [0, 0, 0]).all(axis=-1)] = [1, 0, 0]
