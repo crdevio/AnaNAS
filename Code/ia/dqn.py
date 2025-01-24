@@ -15,7 +15,7 @@ class DQN(nn.Module):
 
         self.fc1 = nn.Linear(1 * (input_samples // 1), 16)
         self.fc2 = nn.Linear(2, 16)
-        self.fc3 = nn.Linear(16,output_features)
+        self.fc3 = nn.Linear(16+1,output_features)
 
         self.to(DEVICE)
 
@@ -43,7 +43,9 @@ class DQN(nn.Module):
         x = goal
 
         x = F.relu(self.fc2(x))
-        x = self.fc3(x)
+        y = torch.cat((x, vitesse), dim=1)
+        y.to(DEVICE)
+        x = self.fc3(y)
 
         return x
     

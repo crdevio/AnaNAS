@@ -1,6 +1,6 @@
 import torch
 
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = "cpu" if torch.cuda.is_available() else "cpu"
 
 print(f"Using {DEVICE} device")
 
@@ -13,3 +13,4 @@ SHOW_INFO_EVERY = 500
 WARMUP_PHASE = 2000  #20 000 dans le TP
 TEST_EVRY = 100
 GOAL_RADIUS = 200
+

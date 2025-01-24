@@ -10,7 +10,6 @@ from simulation.graphics import Simulation, epsilon_dict, STATIC_URLS
 from dynamic.dynamic_env import DynamicEnvironnement
 import random
 from dynamic.voiture import Voiture
-
 def choose_rd_from_list(l):
     return l[random.randint(0, len(l) - 1)]
 
@@ -127,4 +126,3 @@ class DeepQAgent:
                 torch.save(self.policy_model.state_dict(), "./weights")
                 print("saved")
         pass
-        pygame.quit()
