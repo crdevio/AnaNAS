@@ -1,6 +1,7 @@
 from collections import namedtuple, deque
 import numpy as np
 import torch
+from ia.constants import LONGUEUR_CONE, LARGEUR_CONE, MEM_SIZE
 
 MEM_SIZE = 100000 # taille de la simulation, 100 000 dans le TP
 
@@ -11,7 +12,7 @@ class Memory:
         self.size = 0
 
         #States contient cone, vitesse, goal sous forme de tuple. Il faut couper en trois pour optimiser le calcul
-        self.cone = torch.zeros((MEM_SIZE, 101, 51, 3), dtype=torch.float32)
+        self.cone = torch.zeros((MEM_SIZE, LONGUEUR_CONE + 1, 2 * LARGEUR_CONE + 1, 3), dtype=torch.float32)
         self.vitesse = torch.zeros((MEM_SIZE,), dtype=torch.float32)
         self.goal = torch.zeros((MEM_SIZE,2), dtype=torch.float32)
         self.actions = torch.zeros((MEM_SIZE,), dtype=torch.int32)

@@ -26,7 +26,7 @@ class DQN(nn.Module):
         #time_emb = self.get_time_embedding(torch.arctan(goal[:,1]/goal[:,0]))
         #time_emb = time_emb.unsqueeze(-1).unsqueeze(-1).unsqueeze(-1)  # Make it (batch_size, 2, 1, 1)
         #time_emb = self.time_emb_layer(time_emb)
-        
+        print(f'Dans le modèle : {x.shape}')
         x = x.transpose(1, 3).to(DEVICE)
         #x += time_emb
         x = self.conv1(x)
@@ -34,6 +34,7 @@ class DQN(nn.Module):
 
         x = x.view(x.size(0), -1)
         x = F.relu(x)
+        print(f'Juste avant le linéaire : {x.shape}')
         x = F.relu(self.fc1(x))
 
         x = torch.cat((x, vitesse, goal), dim=1).to(torch.float32)

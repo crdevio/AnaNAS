@@ -4,6 +4,7 @@ import pygame
 from .dynamic import Dynamic
 from math import cos, sin, pi, atan
 import numpy as np
+from ia.constants import LONGUEUR_CONE, LARGEUR_CONE
 
 VITESSE_MAX = 100
 VITESSE_MIN = -2
@@ -16,7 +17,6 @@ VITESSE_ROT_NECESS = 20
 
 RAYON_CONE = 64
 ANGLE_CONE = 2*pi / 3
-LARGEUR_CONE = 32
 
 
 class Voiture(Dynamic):
@@ -33,11 +33,12 @@ class Voiture(Dynamic):
 
         #Pour l'instant le cone va en fait se transformer en rectangle. C'est les coordonées si la voiture est centrée en 0
         self.cone = []
-        for i in range(0 + LONGUEUR // 2, 101 + LONGUEUR // 2):
+        for i in range(LONGUEUR // 2, LONGUEUR // 2 + LONGUEUR_CONE + 1):
             self.cone.append([])
-            for j in range(-25, 26):
+            for j in range(-LARGEUR_CONE, LARGEUR_CONE + 1):
                 self.cone[-1].append([i, j])
         self.cone = np.array(self.cone, int)
+        print(self.cone.shape)
                     
 
     def update(self, dt, events):
