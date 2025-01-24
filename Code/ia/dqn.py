@@ -14,7 +14,7 @@ class DQN(nn.Module):
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
         self.fc1 = nn.Linear(1 * (input_samples // 1), 16)
-        self.fc2 = nn.Linear(3, 16)
+        self.fc2 = nn.Linear(2, 16)
         self.fc3 = nn.Linear(16,output_features)
 
         self.to(DEVICE)
@@ -40,7 +40,7 @@ class DQN(nn.Module):
 
         """
 
-        x = torch.cat((vitesse, goal), dim=1).to(torch.float32)
+        x = goal
 
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
