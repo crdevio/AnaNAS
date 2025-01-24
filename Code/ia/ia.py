@@ -4,16 +4,21 @@ import torch.nn as nn
 import torch.nn.functional as F
 from ia.constants import *
 
-
 def state_reward(car):
-    # ATTENTION y a peut-être une couille entre l'appel à state_reward et la valeur de collision.
-    score = 40*np.exp(-np.linalg.norm(np.array([car.x_position, car.y_position]) - np.array(car.goal))/100.)
-    vector_to_goal = np.array([car.x_position, car.y_position]) - np.array(car.goal)
-    theta_g = np.atan2(vector_to_goal[1],vector_to_goal[0])
-    score -= 4*np.abs(theta_g)
+    distance_to_goal = np.linalg.norm(np.array([car.x_position, car.y_position]) - np.array(car.goal))
+
+    vector_to_goal = np.array(car.goal) - np.array([car.x_position, car.y_position])
+    theta_g = np.arctan2(vector_to_goal[1], vector_to_goal[0]) 
+    theta_diff = np.abs(theta_g - car.orientation)  
+    reward = 100 / (1 + distance_to_goal) 
+    reward += 10 * np.cos(theta_diff) 
     if car.collision:
-        score = -100
-    return score
+        reward = -100
+
+    if distance_to_goal < 1: 
+        reward += 100
+
+    return reward
 
 def decide(cone, speed, car, greedy, model, do_opti):
     cone = torch.tensor(np.array(cone), dtype=torch.float32, device=DEVICE)
