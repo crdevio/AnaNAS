@@ -14,7 +14,7 @@ class DQN(nn.Module):
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
         self.fc1 = nn.Linear(1 * (input_samples // 1), 16)
-        self.fc2 = nn.Linear(16 + 3, 16)
+        self.fc2 = nn.Linear(3, 16)
         self.fc3 = nn.Linear(16,output_features)
 
         self.to(DEVICE)
@@ -26,6 +26,8 @@ class DQN(nn.Module):
         #time_emb = self.get_time_embedding(torch.arctan(goal[:,1]/goal[:,0]))
         #time_emb = time_emb.unsqueeze(-1).unsqueeze(-1).unsqueeze(-1)  # Make it (batch_size, 2, 1, 1)
         #time_emb = self.time_emb_layer(time_emb)
+
+        """
         
         x = x.transpose(1, 3).to(DEVICE)
         #x += time_emb
@@ -36,7 +38,9 @@ class DQN(nn.Module):
         x = F.relu(x)
         x = F.relu(self.fc1(x))
 
-        x = torch.cat((x, vitesse, goal), dim=1).to(torch.float32)
+        """
+
+        x = torch.cat((vitesse, goal), dim=1).to(torch.float32)
 
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
