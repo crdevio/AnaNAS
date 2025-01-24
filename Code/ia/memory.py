@@ -3,8 +3,6 @@ import numpy as np
 import torch
 from ia.constants import LONGUEUR_CONE, LARGEUR_CONE, MEM_SIZE
 
-MEM_SIZE = 100000 # taille de la simulation, 100 000 dans le TP
-
 class Memory:
     def __init__(self):
 
