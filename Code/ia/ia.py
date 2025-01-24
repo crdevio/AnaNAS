@@ -7,9 +7,11 @@ from ia.constants import *
 
 def state_reward(car):
     # ATTENTION y a peut-être une couille entre l'appel à state_reward et la valeur de collision.
+    return 100/(0.01 + np.linalg.norm(np.array([car.x_position, car.y_position]) - np.array(car.goal))/10)
     score = 40*np.exp(-np.linalg.norm(np.array([car.x_position, car.y_position]) - np.array(car.goal))/100.)
-    vector_to_goal = np.array([car.x_position, car.y_position]) - np.array(car.goal)
+    vector_to_goal = np.array(car.goal) - np.array([car.x_position, car.y_position])
     theta_g = np.atan2(vector_to_goal[1],vector_to_goal[0])
+    print(f'Angle theta : {np.abs(theta_g)}')
     score -= 4*np.abs(theta_g)
     if car.collision:
         score = -100

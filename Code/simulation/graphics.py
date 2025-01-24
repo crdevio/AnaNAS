@@ -51,6 +51,7 @@ class Simulation:
         self.clock = pygame.time.Clock()
         self.clock.tick(FPS)
         self.screen = pygame.display.set_mode(res)
+        self.font = pygame.font.Font(None, 50)  # None pour utiliser la police par défaut, 50 pour la taille
         if static_url == "":
             self.static_img = None
         else:
@@ -97,7 +98,7 @@ class Simulation:
         self.dyn_env.update_env(dt,keys)
         #image_array = pygame.surfarray.array3d(pygame.display.get_surface())
         return self.dyn_env.decisions(self.static_arr,mem,t)
-    def draw(self):
+    def draw(self,score):
         if not self.drawing: 
             return
         if self.static_img == None:
@@ -156,6 +157,8 @@ class Simulation:
                         car.collision = True
                 pygame.draw.polygon(self.screen,shape[1],rotated_corners)
         pygame.draw.circle(self.screen, "red", (self.GOAL[0] - self.camera.x, self.GOAL[1] - self.camera.y), 6)
+        text_surface = self.font.render(f"Score: {score}", True, (255, 0,0))  # True pour l'anti-aliasing
+        self.screen.blit(text_surface, (300,500))
         pygame.display.flip()
 
 '''
