@@ -76,8 +76,8 @@ class DeepQAgent:
                     is_terminal = True
                     print("Final Reward: ", self.memory.rewards[self.memory.mem_index-1])
                     self.eps_decay = EPS_DECAY
-                self.jeu.draw(0)
                 rewards = ia.state_reward(dyn_env.cars[0])
+                self.jeu.draw(rewards)
                 if self.global_t >= WARMUP_PHASE and self.do_opti and self.global_t % MODEL_UPDATE_EVERY == 0:
                     self.optimize_model()
                 for car in dyn_env.cars:
