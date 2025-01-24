@@ -29,8 +29,10 @@ STATIC_URLS = {"output/decaler.png" : [(230,160),[(80,140,0)]],
                "output/squared2.png": [(220,280),[(80,250,0)]]}
 """
 
-STATIC_URLS = {"output/squared.png": [(220,220),[(80,250,0)]],
-               "output/squared2.png": [(220,280),[(80,250,0)]]}
+STATIC_URLS = {
+                "output/test_carre.png" : [(550,125),[(215,200,0)]],
+                "output/test_carre2.png" : [(550,275),[(215,200,0)]]
+                }
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 

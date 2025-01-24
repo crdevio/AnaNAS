@@ -9,9 +9,9 @@ def state_reward(car):
 
     vector_to_goal = np.array(car.goal) - np.array([car.x_position, car.y_position])
     theta_g = np.arctan2(vector_to_goal[1], vector_to_goal[0]) 
-    theta_diff = np.abs(theta_g - car.orientation)  
-    reward = 100 / (1 + distance_to_goal) 
-    reward += 10 * np.cos(theta_diff) 
+    theta_diff = np.abs(theta_g - car.orientation) 
+    reward = 100 / (1 + (distance_to_goal/10)**2) 
+    reward += 1 * np.cos(theta_diff) 
     if car.collision:
         reward = -100
 
