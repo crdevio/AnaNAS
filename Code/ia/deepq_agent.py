@@ -35,6 +35,7 @@ class DeepQAgent:
                 epsilon_dict[k] = EPS_TEST
             print("The model is in test mode: it will always drive with EPS_TEST and will not learn.")
         else: print("The model is in training mode: it will start from EPS_START and decrease to EPS_MIN.")
+        self.weight_path = weight_path
         if weight_path != None and os.path.isfile(weight_path): 
             print(f"Loading weights from {weight_path}")
             self.policy_model.load_state_dict(torch.load(weight_path, weights_only=True))

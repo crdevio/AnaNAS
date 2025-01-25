@@ -77,7 +77,6 @@ class Simulation:
         self.camera = Camera(res[0],res[1])
 
         self.dyn_env = dyn_env
-
     def update(self,mem,t,sim):
         self.clock.tick(FPS)
         for event in pygame.event.get(): 
@@ -104,9 +103,6 @@ class Simulation:
         if not self.drawing: 
             return
         if self.static_img == None:
-            print("Nathan t'as pas set static_img")
-            print("Clement cette phrase ne veut rien dire")
-            print("De toute facon faudra qu'on reorganise les fichiers entre eux et ya d'autres trus qui vont pas")
             return
         
 
