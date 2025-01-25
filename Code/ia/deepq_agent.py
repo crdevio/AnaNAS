@@ -10,7 +10,7 @@ from simulation.graphics import Simulation, epsilon_dict, STATIC_URLS
 from dynamic.dynamic_env import DynamicEnvironnement
 import random
 from dynamic.voiture import Voiture
-
+import os
 def choose_rd_from_list(l):
     return l[random.randint(0, len(l) - 1)]
 
@@ -32,10 +32,12 @@ class DeepQAgent:
             eps_start = eps
         if not do_opti: print("The model is in test mode: it will drive 100% using the model, no randomness.")
         else: print("The model is in training mode: it will start from EPS_START and decrease to EPS_MIN.")
-        if weight_path != None: 
+        if weight_path != None and os.path.isfile(weight_path): 
             print(f"Loading weights from {weight_path}")
             self.policy_model.load_state_dict(torch.load(weight_path, weights_only=True))
             self.target_model.load_state_dict(torch.load(weight_path, weights_only=True))
+        elif weight_path != None:
+            print(f"Can not load weights from {weight_path}. The file does not exist. But weights will be save here.")
         self.policy_optimizer = optim.Adam(self.policy_model.parameters(), lr = lr)
         self.policy_epsgreedy = EpsilonGreedy(self.policy_model,eps_start)
 
@@ -126,7 +128,6 @@ class DeepQAgent:
             if self.global_t >= WARMUP_PHASE:
                 epsilon_dict[self.jeu.static_url] = max(epsilon_dict[self.jeu.static_url] - self.eps_decay, EPS_MIN)
             if self.iter % SAVE_EVERY == 0:
-                torch.save(self.policy_model.state_dict(), "./weights")
-                print("saved")
+                torch.save(self.policy_model.state_dict(), self.weight_path)
+                print(f"Saved model weights to {self.weight_path}")
         pass
-        pygame.quit()
