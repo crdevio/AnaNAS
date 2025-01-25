@@ -6,18 +6,18 @@ import ia.ia as ia
 import torch
 import torch.optim as optim
 import torch.nn as nn
-from simulation.graphics import Simulation, epsilon_dict, STATIC_URLS
+from simulation.graphics import Simulation, STATIC_URLS, STATIC_URLS_LIST
 from dynamic.dynamic_env import DynamicEnvironnement
 import random
 from dynamic.voiture import Voiture
 import os
+
 def choose_rd_from_list(l):
     return l[random.randint(0, len(l) - 1)]
 
 class DeepQAgent:
     #dans le TP, lr = 1e-4
-    def __init__(self, T=100, game_per_epoch = 10, gamma=0.5, lr = 1e-3, weight_path = None, do_opti = True, target_update_freq = 1000, eps = None):
-
+    def __init__(self, T=100, game_per_epoch=10, gamma=0.5, lr=1e-3, weight_path=None, do_opti=True, target_update_freq=1000, eps=None):
         self.memory = Memory()
         self.t = 0
         self.num_sim = 0
@@ -30,11 +30,13 @@ class DeepQAgent:
         eps_start = EPS_START
         if eps != None:
             eps_start = eps
+        self.epsilon_dict = {key: eps_start for key in STATIC_URLS_LIST}
         if not do_opti: 
-            for k in epsilon_dict.keys():
-                epsilon_dict[k] = EPS_TEST
+            for k in self.epsilon_dict.keys():
+                self.epsilon_dict[k] = EPS_TEST
             print("The model is in test mode: it will always drive with EPS_TEST and will not learn.")
-        else: print("The model is in training mode: it will start from EPS_START and decrease to EPS_MIN.")
+        else: 
+            print("The model is in training mode: it will start from EPS_START and decrease to EPS_MIN.")
         self.weight_path = weight_path
         if weight_path != None and os.path.isfile(weight_path): 
             print(f"Loading weights from {weight_path}")
@@ -43,7 +45,7 @@ class DeepQAgent:
         elif weight_path != None:
             print(f"Can not load weights from {weight_path}. The file does not exist. But weights will be save here.")
         self.policy_optimizer = optim.Adam(self.policy_model.parameters(), lr = lr)
-        self.policy_epsgreedy = EpsilonGreedy(self.policy_model,eps_start)
+        self.policy_epsgreedy = EpsilonGreedy(self.policy_model, eps_start)
 
         self.jeu = None
         self.global_t = 0
@@ -55,7 +57,7 @@ class DeepQAgent:
 
     def etape1(self):
         self.jeu = Simulation(dyn_env=None)
-        self.policy_epsgreedy.eps = epsilon_dict[self.jeu.static_url]
+        self.policy_epsgreedy.eps = self.epsilon_dict[self.jeu.static_url]
         is_terminal = False
         for _ in range(self.game_per_epoch):
             dyn_env = DynamicEnvironnement(
@@ -116,9 +118,9 @@ class DeepQAgent:
             self.etape1()
             if self.global_t >= WARMUP_PHASE:
                 if not self.do_opti:
-                    epsilon_dict[self.jeu.static_url] = EPS_TEST
+                    self.epsilon_dict[self.jeu.static_url] = EPS_TEST
                 else: 
-                    epsilon_dict[self.jeu.static_url] = max(epsilon_dict[self.jeu.static_url] - self.eps_decay, EPS_MIN)
+                    self.epsilon_dict[self.jeu.static_url] = max(self.epsilon_dict[self.jeu.static_url] - self.eps_decay, EPS_MIN)
             if self.iter % SAVE_EVERY == 0:
                 torch.save(self.policy_model.state_dict(), self.weight_path)
                 print(f"Saved model weights to {self.weight_path}")

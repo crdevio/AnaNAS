@@ -36,8 +36,6 @@ STATIC_URLS = {
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
-epsilon_dict = {key: 1. for key in STATIC_URLS_LIST}
-
 pygame.init()
 font = pygame.font.Font(None, 36)
 
