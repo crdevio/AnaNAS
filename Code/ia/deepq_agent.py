@@ -43,8 +43,12 @@ class DeepQAgent:
             self.policy_model.load_state_dict(torch.load(weight_path, weights_only=True))
             self.target_model.load_state_dict(torch.load(weight_path, weights_only=True))
         elif weight_path != None:
-            print(f"Can not load weights from {weight_path}. The file does not exist. But weights will be save here.")
-        self.save_path = save_path
+            print(f"Can not load weights from {weight_path}. The file does not exist.")
+        if save_path != None:
+            self.save_path = save_path
+            print(f"Model weights will be saved to {save_path}")
+        else:
+            print(f"Model weights will not be saved because no -s has been provide.")
         self.policy_optimizer = optim.Adam(self.policy_model.parameters(), lr = lr)
         self.policy_epsgreedy = EpsilonGreedy(self.policy_model, eps_start)
 
