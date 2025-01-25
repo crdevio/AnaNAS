@@ -17,7 +17,7 @@ def choose_rd_from_list(l):
 
 class DeepQAgent:
     #dans le TP, lr = 1e-4
-    def __init__(self, T=100, game_per_epoch=10, gamma=0.5, lr=1e-3, weight_path=None, do_opti=True, target_update_freq=1000, eps=None):
+    def __init__(self, T=100, game_per_epoch=10, gamma=0.5, lr=1e-3, weight_path=None, save_path=None, do_opti=True, target_update_freq=1000, eps=None):
         self.memory = Memory()
         self.t = 0
         self.num_sim = 0
@@ -44,6 +44,7 @@ class DeepQAgent:
             self.target_model.load_state_dict(torch.load(weight_path, weights_only=True))
         elif weight_path != None:
             print(f"Can not load weights from {weight_path}. The file does not exist. But weights will be save here.")
+        self.save_path = save_path
         self.policy_optimizer = optim.Adam(self.policy_model.parameters(), lr = lr)
         self.policy_epsgreedy = EpsilonGreedy(self.policy_model, eps_start)
 
@@ -121,7 +122,7 @@ class DeepQAgent:
                     self.epsilon_dict[self.jeu.static_url] = EPS_TEST
                 else: 
                     self.epsilon_dict[self.jeu.static_url] = max(self.epsilon_dict[self.jeu.static_url] - self.eps_decay, EPS_MIN)
-            if self.iter % SAVE_EVERY == 0:
-                torch.save(self.policy_model.state_dict(), self.weight_path)
-                print(f"Saved model weights to {self.weight_path}")
+            if self.iter % SAVE_EVERY == 0  and self.save_path != None:
+                torch.save(self.policy_model.state_dict(), self.save_path)
+                print(f"Saved model weights to {self.save_path}")
         pass
