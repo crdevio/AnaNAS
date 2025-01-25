@@ -23,10 +23,7 @@ def state_reward(car):
 def decide(cone, speed, car, greedy, model, do_opti):
     cone = torch.tensor(np.array(cone), dtype=torch.float32, device=DEVICE)
     cone = cone.view(1, cone.shape[0], cone.shape[1], cone.shape[2])
-    if do_opti:
-        rep = greedy((cone, torch.tensor(car.vitesse, device=DEVICE), torch.tensor(car.get_relative_goal_position(), device=DEVICE,dtype=torch.float32)))
-    else:
-        rep = model(cone, torch.tensor(car.vitesse, device=DEVICE), torch.tensor(car.get_relative_goal_position(), device=DEVICE))
+    rep = greedy((cone, torch.tensor(car.vitesse, device=DEVICE), torch.tensor(car.get_relative_goal_position(), device=DEVICE,dtype=torch.float32)))
     j = torch.argmax(rep, dim=1)
     rep = torch.tensor(
         [

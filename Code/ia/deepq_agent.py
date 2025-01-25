@@ -30,7 +30,10 @@ class DeepQAgent:
         eps_start = EPS_START
         if eps != None:
             eps_start = eps
-        if not do_opti: print("The model is in test mode: it will drive 100% using the model, no randomness.")
+        if not do_opti: 
+            for k in epsilon_dict.keys():
+                epsilon_dict[k] = EPS_TEST
+            print("The model is in test mode: it will always drive with EPS_TEST and will not learn.")
         else: print("The model is in training mode: it will start from EPS_START and decrease to EPS_MIN.")
         if weight_path != None and os.path.isfile(weight_path): 
             print(f"Loading weights from {weight_path}")
@@ -50,17 +53,6 @@ class DeepQAgent:
         self.target_update_freq = target_update_freq
 
     def etape1(self):
-        mode = "train"
-
-        
-        """ Nathan c'est quoi ça ? Tu pourras le bouger au bon endroit stp
-        if self.iter % TEST_EVRY <= len(STATIC_URLS_LIST) - 1 and self.global_t >= WARMUP_PHASE:
-            mode = "test"
-            static_url = STATIC_URLS_LIST[self.iter % TEST_EVRY]
-            self.policy_epsgreedy.eps = 0
-            print("TEST situation number", self.iter % TEST_EVRY)
-        """
-        
         self.jeu = Simulation(dyn_env=None)
         self.policy_epsgreedy.eps = epsilon_dict[self.jeu.static_url]
         is_terminal = False
@@ -78,7 +70,6 @@ class DeepQAgent:
                 cone, vitesse, goal, actions= self.jeu.update(self.memory, self.t, self)
                 if self.t == (self.T):
                     is_terminal = True
-                    print("Final Reward: ", self.memory.rewards[self.memory.mem_index-1])
                     self.eps_decay = EPS_DECAY
                 rewards = ia.state_reward(dyn_env.cars[0])
                 self.jeu.draw(rewards)
@@ -86,15 +77,12 @@ class DeepQAgent:
                     self.optimize_model()
                 for car in dyn_env.cars:
                     if car.collision:
-                        print("CRASH")
                         is_terminal = True
                         self.eps_decay = EPS_DECAY
                 for car in dyn_env.cars:
                     if (car.x_position-self.jeu.GOAL[0])**2 + (car.y_position-self.jeu.GOAL[1])**2 <= GOAL_RADIUS:
-                        print("GOAL")
                         is_terminal = True
                         rewards = 100
-                        print("Final Reward: ", self.memory.rewards[self.memory.mem_index-1])
                         self.eps_decay = 5*EPS_DECAY
                 self.update_freq_delay += 1
                 if self.update_freq_delay >= self.target_update_freq:
@@ -126,7 +114,10 @@ class DeepQAgent:
             #self.memoire = Memory()
             self.etape1()
             if self.global_t >= WARMUP_PHASE:
-                epsilon_dict[self.jeu.static_url] = max(epsilon_dict[self.jeu.static_url] - self.eps_decay, EPS_MIN)
+                if not self.do_opti:
+                    epsilon_dict[self.jeu.static_url] = EPS_TEST
+                else: 
+                    epsilon_dict[self.jeu.static_url] = max(epsilon_dict[self.jeu.static_url] - self.eps_decay, EPS_MIN)
             if self.iter % SAVE_EVERY == 0:
                 torch.save(self.policy_model.state_dict(), self.weight_path)
                 print(f"Saved model weights to {self.weight_path}")

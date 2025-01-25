@@ -5,7 +5,7 @@ from ia.constants import *
 EPS_START = 1.
 EPS_DECAY = 1e-3        #dans le TP 1e-5
 EPS_MIN = 0.1
-
+EPS_TEST = 0.4
 class EpsilonGreedy:
     def __init__(self, policy:DQN, epsilon):
         self.policy = policy
