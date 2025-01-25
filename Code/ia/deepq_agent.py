@@ -30,8 +30,10 @@ class DeepQAgent:
         eps_start = EPS_START
         if eps != None:
             eps_start = eps
-
+        if not do_opti: print("The model is in test mode: it will drive 100% using the model, no randomness.")
+        else: print("The model is in training mode: it will start from EPS_START and decrease to EPS_MIN.")
         if weight_path != None: 
+            print(f"Loading weights from {weight_path}")
             self.policy_model.load_state_dict(torch.load(weight_path, weights_only=True))
             self.target_model.load_state_dict(torch.load(weight_path, weights_only=True))
         self.policy_optimizer = optim.Adam(self.policy_model.parameters(), lr = lr)
