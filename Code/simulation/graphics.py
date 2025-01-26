@@ -142,8 +142,9 @@ class Simulation:
                 #polygone = Polygon(rotated_corners)
                 c = False
                 car.collision = False
-                cone = car.get_cone()
-                pygame.draw.polygon(self.screen, (27, 255, 89), [cone[0][0],cone[0][-1],cone[-1][-1],cone[-1][0]], width=5)
+                cone = np.array(car.get_cone())
+                cam = np.array([self.camera.x,self.camera.y])
+                pygame.draw.polygon(self.screen, (27, 255, 89), [cone[0][0]-cam,cone[0][-1]-cam,cone[-1][-1]-cam,cone[-1][0]-cam], width=5)
                 for e in rotated_corners:
                     x,y = int(e[0]),int(e[1])
                     x+=int(self.camera.x)
