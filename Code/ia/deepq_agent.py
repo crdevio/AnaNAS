@@ -44,8 +44,8 @@ class DeepQAgent:
             self.target_model.load_state_dict(torch.load(weight_path, weights_only=True))
         elif weight_path != None:
             print(f"Can not load weights from {weight_path}. The file does not exist.")
+        self.save_path = save_path
         if save_path != None:
-            self.save_path = save_path
             print(f"Model weights will be saved to {save_path}")
         else:
             print(f"Model weights will not be saved because no -s has been provide.")
