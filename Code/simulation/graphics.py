@@ -26,12 +26,15 @@ STATIC_URLS = {"output/decaler.png" : [(230,160),[(80,140,0)]],
                "output/straight.png":[(400,140),[(80,140,0),(150,140,0),(210,140,0)]]
                "output/curved.png" : [(170,220),[(80,140,0),(130,160,np.pi/4)]],
                "output/squared.png": [(220,220),[(80,250,0)]],
-               "output/squared2.png": [(220,280),[(80,250,0)]]}
+               "output/squared2.png": [(220,280),[(80,250,0)]],
+               "output/test_carre.png" : [(550,125),[(215,200,0)]],
+                "output/test_carre2.png" : [(550,275),[(215,200,0)]],
+                "output/curved_left.png" : [(230,375),[(70,535,0)]]}
 """
 
 STATIC_URLS = {
-                "output/test_carre.png" : [(550,125),[(215,200,0)]],
-                "output/test_carre2.png" : [(550,275),[(215,200,0)]]
+                "output/squared.png": [(220,220),[(80,250,0)]],
+               "output/squared2.png": [(220,280),[(80,250,0)]],
                 }
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())

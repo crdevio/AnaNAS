@@ -28,7 +28,11 @@ class DynamicEnvironnement:
             cone = car.get_cone()
             #cone = np.int32(np.min(np.concatenate((cone.reshape(101, 51, 1, 2), to_compare), axis=2), axis=2))
             cone = np.int32(cone)
-            cone = img_np[cone[:, :, 0], cone[:, :, 1]]
+            x = cone[:, :, 0]
+            y = cone[:, :, 1]
+            valid_mask = (x >= 0) & (x < img_np.shape[0]) & (y >= 0) & (y < img_np.shape[1])
+            cone = np.zeros((cone.shape[0], cone.shape[1], 3), dtype=img_np.dtype)
+            cone[valid_mask] = img_np[x[valid_mask], y[valid_mask]]
             inputs = self.decide(cone,car.vitesse,car)
             car.get_inputs(inputs)
             return (cone, car.vitesse, car.get_relative_goal_position(), torch.argmax(inputs))
