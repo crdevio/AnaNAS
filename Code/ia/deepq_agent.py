@@ -68,7 +68,9 @@ class DeepQAgent:
             dyn_env = DynamicEnvironnement(
                 lambda cone,speed,car: ia.decide(cone,speed,car,self.policy_epsgreedy,self.policy_model,self.do_opti)
             )
-            starting_pos = choose_rd_from_list(STATIC_URLS[self.jeu.static_url][1])
+            index = random.randint(0,len(STATIC_URLS[self.jeu.static_url])-2)
+            starting_pos = STATIC_URLS[self.jeu.static_url][index]
+            self.jeu.GOAL = STATIC_URLS[self.jeu.static_url][index+1][:2]
             dyn_env.add_car(Voiture(position=starting_pos[:2], ia=True, goal=self.jeu.GOAL, orientation=starting_pos[2]))
             self.jeu.dyn_env = dyn_env
             self.t = 0

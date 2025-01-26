@@ -33,7 +33,7 @@ STATIC_URLS = {"output/decaler.png" : [(230,160),[(80,140,0)]],
 """
 
 STATIC_URLS = {
-                "output/double_virage.png" : [(400,370),[(70,435,0)]]
+                "output/double_virage.png" : [(70,435,0),(145,410,-np.pi/6),(400,370,0)]
                 }
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
