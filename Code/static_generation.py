@@ -80,5 +80,7 @@ def generate_images(env,width,height,file='output/image.png'):
     image.save(file)
 
 static_env = StaticEnvironnement()
-static_env.add(CurvedRoad((50,360),150,60,np.pi/2,0))
-generate_images(static_env,1000,1000,file='output/curved_left.png')
+static_env.add(CurvedRoad((50,260),150,60,np.pi/2,np.pi/4))
+static_env.add(CurvedRoad((303,513),150,60,-3*np.pi/4,-np.pi/4))
+
+generate_images(static_env,1000,1000,file='output/double_virage.png')
