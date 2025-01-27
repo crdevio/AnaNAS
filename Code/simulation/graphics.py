@@ -19,7 +19,9 @@ FPS = 600
 CAMERA_SPEED = 100
 GOAL = (400,40) #(140,122)
 
-#mettre dedans les urls des fichiers et leur goal
+# "link_to.png" : [spawn_pos_for_goal_1, goal_pos1, ..., goal_posn]. The spawn position for goal i is goal (i-1).
+# If you want to train on the same spawn point but with 2 different goals ,you need to add two maps with the spawn spawn pos 
+# but different goals 
 """
 STATIC_URLS = {"output/decaler.png" : [(230,160),[(80,140,0)]],
                "output/short.png" : (170,140),
