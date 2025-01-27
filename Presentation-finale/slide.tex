@@ -68,7 +68,36 @@
 	\section{Reinforcement learning}
 	
 	\begin{frame}{A quoi ça sert}
+		
+		Reinforcement learning : Agent qui évolue dans un environement et qui apprend au fil de ses erreur 
 	
+	\end{frame}
+	
+	\begin{frame}{Formulation mathématiques}
+		
+		L'agent intéragit avec un environement stochastique $\mathcal{E}$ dans lequel il joue des partie composé d'un ensemble d'état, de score et d'action
+		
+		A chaque étape, il sélectionne une action $a_t$ parmis un ensemble $A = \{1, ..., K\}$ d'action légale
+		
+		A chaque étape, l'agent a accès à un ensemble d'information $x_t \in \mathbb{R}^d$.
+	
+	\end{frame}
+	
+	\begin{frame}{Objectif de l'agent}
+		
+		On définit le rendement futur attendu par
+		$$R_t = \sum_{t' = t}^{T}\gamma^{t' - t}r_{t'}$$
+		où $T$ est l'instant auquel le jeu s'arrête. \\
+		But de l'agent : maximiser ce rendement. 
+				
+	\end{frame}
+	
+	\begin{frame}{Optimal action value function}
+		
+		On définit l'optimal action value function $Q*(s', a')$ qui donne le bon choix à faire en fonction de la situation actuelle. \\
+		Cette fonction suit l'équation de Bellman:
+		$$Q^*(s, a) = \mathbb{E}_{s' \sim \mathcal{E}}[r + \gamma \cdot \max_{a'}Q^*(s', a') | s, a]$$
+		
 	\end{frame}
 	
 	\section{Deep Q Learning}
