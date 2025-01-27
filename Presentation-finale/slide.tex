@@ -1,0 +1,105 @@
+\documentclass{beamer}
+\usetheme{metropolis}
+\usepackage{subcaption}
+
+% Configuration des couleurs modernes
+\definecolor{myblue}{RGB}{173, 216, 230} % Bleu pastel
+\definecolor{mymagenta}{RGB}{238, 130, 238} % Magenta doux
+\definecolor{mywhite}{RGB}{255, 255, 255} % Blanc pur
+\definecolor{mygray}{RGB}{245, 245, 245} % Gris clair
+\definecolor{darkblue}{RGB}{25, 25, 112} % Bleu foncé
+\definecolor{darkviolet}{RGB}{148, 0, 211} % Violet foncé
+\definecolor{goldenrod}{RGB}{218, 165, 32} % Or doux
+
+% Arrière-plan sobre et clair
+\usepackage{tikz}
+
+\addtobeamertemplate{background canvas}{}{
+	\begin{tikzpicture}[remember picture, overlay]
+		\fill[mywhite] (current page.south west) rectangle (current page.north east);
+		\begin{scope}[blend mode=overlay]
+			\shade[inner color=myblue!60, outer color=mywhite] (current page.south west) rectangle (current page.north east);
+			\shade[inner color=mymagenta!60, outer color=mywhite] (current page.north east) rectangle (current page.south west);
+		\end{scope}
+	\end{tikzpicture}
+}
+
+% Personnalisation des couleurs dans metropolis
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{frametitle}{bg=mywhite, fg=black}
+\setbeamercolor{title separator}{fg=mymagenta}
+\setbeamercolor{progress bar}{fg=myblue, bg=mymagenta}
+\setbeamercolor{block title}{bg=myblue, fg=black}
+\setbeamercolor{block body}{bg=mywhite, fg=black}
+\setbeamercolor{alerted text}{fg=darkviolet!70}
+
+% Personnalisation des typos
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+\setbeamerfont{title}{size=\Huge,series=\bfseries}
+
+% Apparence des transitions entre les frames
+\metroset{progressbar=frametitle,numbering=fraction}
+
+% Commande pour ajuster le séparateur du titre
+\metroset{titleformat frame=smallcaps}
+
+% Début du document
+\begin{document}
+	
+	\title{Ananas : Apprentissage de conduite automatique par Deep Q Learning}
+	\subtitle{Deep Learning - Projet}
+	\author{Clément, Grégoire, Nathan}
+	\date{January 31, 2025}
+	
+	\maketitle
+	
+	\section{Introduction}
+	
+	\begin{frame}{But du projet}
+		
+		Implémenter une voiture qui apprend à conduire en utilisant le Deep Reinforcement Learning.
+		
+		Pour des raisons d'efficacité temporelle, reimplémentation de notre propre environement plutôt que d'en utiliser un déjà tout fait
+		
+		Source principale : \textit{Playing Atari with Deep Reinforcement Learning}
+		
+	\end{frame}
+	
+	\section{Reinforcement learning}
+	
+	\begin{frame}{A quoi ça sert}
+	
+	\end{frame}
+	
+	\section{Deep Q Learning}
+	
+	\begin{frame}{Equations blabla comment ça marche}
+		
+	\end{frame}
+	
+	\section{Environement de simulation}
+	
+	\begin{frame}{Pourquoi recoder notre propre enviornement}
+		
+		Inconvénient d'un émulateur : Temps d'accès potentiellement long, peu de flexibilité sur les informations qu'on peut passer à notre modèle donc moins d'experimentations possibles
+		
+		En recodant notre simulation, on peut contourner tous ces problèmes 
+		
+	\end{frame}
+	
+	\begin{frame}{Notre simulation}
+		
+		La on met des images de différents exemples
+		
+	\end{frame}
+	
+	\begin{frame}{Entraînement, abblation study et tout}
+	\end{frame}
+	
+	\begin{frame}{Conclusion}
+		
+		
+		
+	\end{frame}
+	
+\end{document}
