@@ -33,10 +33,17 @@ STATIC_URLS = {"output/decaler.png" : [(230,160),[(80,140,0)]],
                 "output/test_carre2.png" : [(550,275),[(215,200,0)]],
                 "output/curved_left.png" : [(230,375),[(70,535,0)]]}
 """
-
+""" DOUBLE VIRAGE AVEC DEUX OBJECTIFS
 STATIC_URLS = {
                 "output/double_virage.png" : [(70,435,0),(145,410,-np.pi/6),(400,370,0)]
                 }
+"""
+
+
+STATIC_URLS = {
+    "output/straight.png": [(40,140,0), (400,140,0)],
+    "output/curved.png" : [(80,140,np.pi/4),(170,220,0)]
+}
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 

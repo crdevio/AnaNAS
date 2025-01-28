@@ -26,3 +26,14 @@ Mem Size: 30000
 EPS Decay: 5e-4
 Map: le premier circuit avec 2 goals.
 Résultat: il a bien appris le deuxième mais pas du tout le premier. je pense que c'est dû à la différence de distance des objectifs.
+
+## 2conv2map
+Number Epochs: 2945
+Last Epsilon: 0.1
+Cone Heights: 75
+COne Width: 300
+Mem Size: 30000
+EPS Decay: 5e-4
+MODELE: DQN AVEC 2 CONV !
+Map: le premier circuit avec 2 goals.
+Résultat: il a bien appris le deuxième mais pas du tout le premier. je pense que c'est dû à la différence de distance des objectifs.
