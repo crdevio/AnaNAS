@@ -16,3 +16,13 @@ Cone Height: 75
 Cone Width: 200
 Mem Size: 30 000
 Model Type: [DEFAULT]
+
+## longtrain_circuit1
+Number Epochs: 1470
+Last Epsilon: 0.1
+Cone Heights: 75
+COne Width: 300
+Mem Size: 30000
+EPS Decay: 5e-4
+Map: le premier circuit avec 2 goals.
+Résultat: il a bien appris le deuxième mais pas du tout le premier. je pense que c'est dû à la différence de distance des objectifs.
