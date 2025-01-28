@@ -69,7 +69,14 @@
 	
 	\begin{frame}{A quoi ça sert}
 		
-		Reinforcement learning : Agent qui évolue dans un environement et qui apprend au fil de ses erreur 
+		Reinforcement learning : Agent qui évolue dans un environement \\
+		Pour chaque action, récompenses ou pénalité. \\
+		Objectif : Maximiser les récompense
+		
+		\begin{figure}
+			\centering
+			\includegraphics[scale=0.3]{img/RL.png}
+		\end{figure}
 	
 	\end{frame}
 	
@@ -94,9 +101,27 @@
 	
 	\begin{frame}{Optimal action value function}
 		
-		On définit l'optimal action value function $Q*(s', a')$ qui donne le bon choix à faire en fonction de la situation actuelle. \\
-		Cette fonction suit l'équation de Bellman:
+		On définit l'optimal action value function $Q*(s', a')$ qui donne le bon choix à faire en fonction de la situation actuelle, cest à dire
+		$$Q^*(s, a)=  \mathbb{E}_{\pi}[R_t | s_t = s, a_t = a, \pi]$$\\
+		Si on dispose de cette fonction, alors il suffit de faire le meilleur choix à chaque fois.
+	\end{frame}
+	
+	\begin{frame}{Comment calculer cette fonction}
+		
+		Cette fonction suit l'équation de Bellman:	
+		
 		$$Q^*(s, a) = \mathbb{E}_{s' \sim \mathcal{E}}[r + \gamma \cdot \max_{a'}Q^*(s', a') | s, a]$$
+		Alors si on pose
+		$$Q_{i + 1}(s, a) = \mathbb{E}[r + \gamma \max_{a'}Q_i(s', a') | s, a]$$
+		$Q_i$ tend vers $Q*$ lorsque $i$ tend vers $+\infty$
+		Problème : Trop dur à estimer, trop de situations différentes possibles
+	\end{frame}
+	
+	\begin{frame}{Estimation de la fonciton par un réseau}
+		
+		Solution : On approxime $Q^*$ par un réseau de neurone $Q(s, a, \theta)$
+		On l'entraîne en minimisant les fonctions
+		$$L_i(\theta_i) = \mathbb{E}_{s, a \sim \rho(.)}[(y_i - Q(s, a; \theta_i))^2]$$
 		
 	\end{frame}
 	
