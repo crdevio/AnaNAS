@@ -46,7 +46,7 @@ class DQN(nn.Module):
         embedding = torch.sin(time_step)
 
         return embedding
-"""
+
 class DQN(nn.Module):
     def __init__(self, input_size, output_features):
         super(DQN, self).__init__()
@@ -79,6 +79,47 @@ class DQN(nn.Module):
         x = x.view(x.size(0), -1)  # (batch_size, 32 * 4 * 4)
 
         # Fully connected layers
+        x = F.relu(self.fc1(x))
+        x = torch.cat((x, vitesse, goal), dim=1).to(torch.float32)
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+
+        return x
+"""
+
+class DQN(nn.Module):
+    def __init__(self, input_size, output_features):
+        super(DQN, self).__init__()
+        
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3, stride=2, padding=1)
+        self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=2, padding=1)
+        self.conv3 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=2, padding=1)
+        self.pool = nn.AdaptiveAvgPool2d((4, 4))
+        
+        self.bn1 = nn.BatchNorm2d(32)
+        self.bn2 = nn.BatchNorm2d(64)
+        self.bn3 = nn.BatchNorm2d(128)
+        
+        conv_output_size = 128 * 4 * 4 
+        self.fc1 = nn.Linear(conv_output_size, 256) 
+        self.fc2 = nn.Linear(256 + 3, 128) 
+        self.fc3 = nn.Linear(128, output_features)
+
+        # Device
+        self.to(DEVICE)
+
+    def forward(self, x, vitesse, goal):
+        vitesse = vitesse.view(-1, 1).to(DEVICE)
+        goal = goal.view(-1, 2).to(DEVICE)
+
+        x = x.transpose(1, 3).to(DEVICE)  
+        x = F.relu(self.bn1(self.conv1(x)))
+        x = F.relu(self.bn2(self.conv2(x)))
+        x = F.relu(self.bn3(self.conv3(x)))
+        x = self.pool(x) 
+
+        x = x.view(x.size(0), -1)  # (batch_size, 128 * 4 * 4)
+
         x = F.relu(self.fc1(x))
         x = torch.cat((x, vitesse, goal), dim=1).to(torch.float32)
         x = F.relu(self.fc2(x))
