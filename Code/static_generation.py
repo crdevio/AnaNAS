@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw
 import numpy as np
 
 LARGEUR_ROUTE = 15
-
+FILE_URL = 'output/circuit_4straight.png'
 class Static:
     def __init__(self,pos) -> None:
         self.pos = pos
@@ -80,7 +80,10 @@ def generate_images(env,width,height,file='output/image.png'):
     image.save(file)
 
 static_env = StaticEnvironnement()
-static_env.add(CurvedRoad((50,260),150,60,np.pi/2,np.pi/4))
-static_env.add(CurvedRoad((303,513),150,60,-3*np.pi/4,-np.pi/4))
+static_env.add(StraightRoad((50,50),(20),300,0))
+static_env.add(StraightRoad((350,100),(300),30,0))
 
-generate_images(static_env,1000,1000,file='output/double_virage.png')
+#static_env.add(CurvedRoad((50,260),150,60,np.pi/2,np.pi/4))
+#static_env.add(CurvedRoad((303,513),150,60,-3*np.pi/4,-np.pi/4))
+print(f"Génère dans {FILE_URL}")
+generate_images(static_env,1000,1000,file=FILE_URL )

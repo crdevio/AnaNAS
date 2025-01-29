@@ -17,7 +17,7 @@ def choose_rd_from_list(l):
 
 class DeepQAgent:
     #dans le TP, lr = 1e-4
-    def __init__(self, T=100, game_per_epoch=10, gamma=0.5, lr=1e-3, weight_path=None, save_path=None, do_opti=True, target_update_freq=1000, eps=None):
+    def __init__(self, T=300, game_per_epoch=10, gamma=0.5, lr=1e-3, weight_path=None, save_path=None, do_opti=True, target_update_freq=1000, eps=None):
         self.memory = Memory()
         self.t = 0
         self.num_sim = 0
