@@ -43,7 +43,7 @@ STATIC_URLS = {
 """
 
 STATIC_URLS = {
-    "output/carre.png": [(122,100,0), (585,93,-np.pi/2), (578,482,-np.pi), (121,479,-3*np.pi/2)]
+    "output/carre.png": [(122,100,0), (585,93,np.pi/2), (578,482,np.pi), (121,479,3*np.pi/2)]
 }
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
