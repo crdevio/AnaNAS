@@ -15,7 +15,7 @@ import sys
 import ia
 
 RES_AFFICHAGE = (600,600)
-FPS = 600 
+FPS = 150
 CAMERA_SPEED = 100
 GOAL = (400,40) #(140,122)
 
