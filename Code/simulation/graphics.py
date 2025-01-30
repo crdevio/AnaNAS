@@ -46,7 +46,9 @@ STATIC_URLS = {
 """
 
 STATIC_URLS = {
-                "output/double_virage.png" : [(70,435,0),(145,410,-np.pi/6),(400,370,0)]
+                "output/double_virage.png" : [(70,435,0),(400,370,0)],
+                "output/decaler.png" : [(80,140,0),(230,160,0)],
+                "output/short.png" : [(70,140,0),(170,140,0)],
 }
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
@@ -56,8 +58,18 @@ font = pygame.font.Font(None, 36)
 
 class Simulation:
 
-    def __init__(self, dyn_env=DynamicEnvironnement(),res = RES_AFFICHAGE, drawing = True, dt = 0.017):
-        static_url = STATIC_URLS_LIST[random.randint(0,len(STATIC_URLS_LIST)-1)]
+    def __init__(self, dyn_env=DynamicEnvironnement(),res = RES_AFFICHAGE, drawing = True, dt = 0.017,probas = None):
+        if probas==None:static_url = STATIC_URLS_LIST[random.randint(0,len(STATIC_URLS_LIST)-1)]
+        else:
+            total = sum(probas.values())
+            r = random.uniform(0, total)
+            cumul = 0
+            
+            for cle, valeur in probas.items():
+                cumul += valeur
+                if r < cumul:
+                    static_url=cle
+                    break
         self.static_url = static_url
         self.GOAL = STATIC_URLS[static_url][0]
         pygame.init()

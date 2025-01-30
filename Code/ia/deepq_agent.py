@@ -61,7 +61,7 @@ class DeepQAgent:
         self.target_update_freq = target_update_freq
 
     def etape1(self):
-        self.jeu = Simulation(dyn_env=None)
+        self.jeu = Simulation(dyn_env=None,probas = self.epsilon_dict)
         self.policy_epsgreedy.eps = self.epsilon_dict[self.jeu.static_url]
         is_terminal = False
         for _ in range(self.game_per_epoch):

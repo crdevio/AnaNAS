@@ -109,7 +109,6 @@ class DQN(nn.Module):
         self.to(DEVICE)
 
     def forward(self, x, vitesse, goal):
-        print(x.shape)
         vitesse = vitesse.view(-1, 1).to(DEVICE)
         goal = goal.view(-1, 2).to(DEVICE)
 
