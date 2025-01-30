@@ -42,9 +42,8 @@ STATIC_URLS = {
 }
 """
 STATIC_URLS = {
-    "output/straight.png": [(40,140,0), (400,140,0)],
-    "output/curved.png" : [(80,140,np.pi/6),(170,220,0)],
-    "output/decaler.png" : [(80,140,0),(230,160,0)],
+    "output/squared.png": [(80,250,0),(220,220)],
+    "output/squared2.png": [(80,250,0),(220,280)],
 }
 
 """
