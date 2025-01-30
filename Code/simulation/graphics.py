@@ -40,14 +40,18 @@ STATIC_URLS = {
     "output/straight.png": [(40,140,0), (400,140,0)],
     "output/curved.png" : [(80,140,np.pi/4),(170,220,0)]
 }
-STATIC_URLS = {
-    "output/carre.png": [(122,100,0), (585,93,np.pi/2), (578,482,np.pi), (121,479,3*np.pi/2)]
-}
 """
+STATIC_URLS = {
+    "output/straight.png": [(40,140,0), (400,140,0)],
+    "output/curved.png" : [(80,140,np.pi/6),(170,220,0)],
+    "output/decaler.png" : [(80,140,0),(230,160,0)],
+}
 
+"""
 STATIC_URLS = {
                 "output/double_virage.png" : [(145,410,-np.pi/6),(410,355,0)]
 }
+"""
 
 STATIC_URLS_LIST = list(STATIC_URLS.keys())
 
