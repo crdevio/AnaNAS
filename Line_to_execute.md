@@ -1,0 +1,1 @@
+py -3.12 .\main.py -l=demo2 -t=True

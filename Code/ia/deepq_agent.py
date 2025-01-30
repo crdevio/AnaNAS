@@ -70,7 +70,7 @@ class DeepQAgent:
             )
             index = random.randint(0,len(STATIC_URLS[self.jeu.static_url])-2)
             starting_pos = STATIC_URLS[self.jeu.static_url][index]
-            self.jeu.GOAL = STATIC_URLS[self.jeu.static_url][index+1][:2]
+            self.jeu.GOAL = STATIC_URLS[self.jeu.static_url][-1][:2]
             dyn_env.add_car(Voiture(position=starting_pos[:2], ia=True, goal=self.jeu.GOAL, orientation=starting_pos[2]))
             self.jeu.dyn_env = dyn_env
             self.t = 0

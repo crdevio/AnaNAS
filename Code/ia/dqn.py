@@ -2,7 +2,7 @@ import torch.nn as nn
 from ia.memory import Memory
 from ia.constants import *
 import torch.nn.functional as F
-""""
+
 class DQN(nn.Module):
     def __init__(self, input_samples, output_features):
         super(DQN, self).__init__()
@@ -46,6 +46,8 @@ class DQN(nn.Module):
         embedding = torch.sin(time_step)
 
         return embedding
+    
+"""
 
 class DQN(nn.Module):
     def __init__(self, input_size, output_features):
@@ -87,6 +89,8 @@ class DQN(nn.Module):
         return x
 """
 
+"""
+
 class DQN(nn.Module):
     def __init__(self, input_size, output_features):
         super(DQN, self).__init__()
@@ -126,3 +130,5 @@ class DQN(nn.Module):
         x = self.fc3(x)
 
         return x
+
+"""
